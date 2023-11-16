@@ -4,5 +4,8 @@
   },
   "installed": [
     "test"
+  ],
+  "skipped": [
+    "skill"
   ]
 }

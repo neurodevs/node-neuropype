@@ -1,4 +1,4 @@
-import AbstractSpruceTest, { test, assert } from '@sprucelabs/test-utils'
+import AbstractSpruceTest, { test, assert, generateId } from '@sprucelabs/test-utils'
 import { Pipeline } from '../../Pipeline'
 import axios from 'axios';
 
@@ -22,7 +22,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 	@test()
 	protected static async pipelineThrowsWithInvalidFilePath() {
-		assert.doesThrow(() => new Pipeline({ filePath: '/some/invalid/path' }))
+		assert.doesThrow(() => new Pipeline({ filePath: generateId() }))
 	}
 
 	@test()
