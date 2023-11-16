@@ -1,38 +1,19 @@
 import fs from 'fs'
-import axios, { AxiosInstance } from 'axios'
+import { assertOptions } from '@sprucelabs/schema'
+import SpruceError from './errors/SpruceError'
 
 export class Pipeline {
+	public static Pipeline(options: PipelineOptions) {
+		const { path } = assertOptions(options, ['path'])
+		if (!fs.existsSync(path)) {
+			throw new SpruceError({ path, code: 'PIPELINE_NOT_FOUND' })
+		}
+		return new this()
+	}
 
-    protected filePath: string
-    protected httpClient: AxiosInstance
-    protected executionId?: number
-
-    public constructor({ filePath, httpClient = axios }: PipelineArgs) {
-        this.validateFilePath(filePath)
-
-        this.filePath = filePath
-        this.httpClient = httpClient
-    }
-
-    public async createExecution() {
-        try {
-            const response = await this.httpClient.post('http://localhost:6937/executions')
-            this.executionId = response.data.id
-            return response
-        } catch {
-            this.executionId = undefined
-            throw new Error('Failed to create execution!')
-        }
-    }
-
-    private validateFilePath(filePath: string) {
-        if (!fs.existsSync(filePath)) {
-            throw new Error(`The pipeline file path "${filePath}" does not exist!`)
-        }
-    }
+	public async load() {}
 }
 
-interface PipelineArgs {
-    filePath: string
-    httpClient?: AxiosInstance
+interface PipelineOptions {
+	path: string
 }
