@@ -20,7 +20,7 @@ export declare namespace SpruceErrors.NodeNeuropype {
 	export interface PipelineNotFoundSchema extends SpruceSchema.Schema {
 		id: 'pipelineNotFound',
 		namespace: 'NodeNeuropype',
-		name: 'Pipeline not found',
+		name: 'Pipeline not found!',
 		    fields: {
 		            /** . */
 		            'path': {
@@ -32,6 +32,27 @@ export declare namespace SpruceErrors.NodeNeuropype {
 	}
 
 	export type PipelineNotFoundEntity = SchemaEntity<SpruceErrors.NodeNeuropype.PipelineNotFoundSchema>
+
+}
+
+
+
+export declare namespace SpruceErrors.NodeNeuropype {
+
+	
+	export interface MissingNeuropypeBaseUrlEnv {
+		
+	}
+
+	export interface MissingNeuropypeBaseUrlEnvSchema extends SpruceSchema.Schema {
+		id: 'missingNeuropypeBaseUrlEnv',
+		namespace: 'NodeNeuropype',
+		name: 'Missing NEUROPYPE_BASE_URL env variable!',
+		    fields: {
+		    }
+	}
+
+	export type MissingNeuropypeBaseUrlEnvEntity = SchemaEntity<SpruceErrors.NodeNeuropype.MissingNeuropypeBaseUrlEnvSchema>
 
 }
 

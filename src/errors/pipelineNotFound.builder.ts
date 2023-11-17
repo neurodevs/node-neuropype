@@ -2,7 +2,7 @@ import { buildErrorSchema } from '@sprucelabs/schema'
 
 export default buildErrorSchema({
 	id: 'pipelineNotFound',
-	name: 'Pipeline not found',
+	name: 'Pipeline not found!',
 	fields: {
 		path: {
 			type: 'text',

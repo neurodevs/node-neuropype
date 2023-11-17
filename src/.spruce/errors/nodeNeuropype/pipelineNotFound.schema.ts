@@ -6,7 +6,7 @@ import { SpruceErrors } from '../errors.types'
 const pipelineNotFoundSchema: SpruceErrors.NodeNeuropype.PipelineNotFoundSchema  = {
 	id: 'pipelineNotFound',
 	namespace: 'NodeNeuropype',
-	name: 'Pipeline not found',
+	name: 'Pipeline not found!',
 	    fields: {
 	            /** . */
 	            'path': {
