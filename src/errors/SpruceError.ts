@@ -12,7 +12,8 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
 				break
 
 			case 'MISSING_NEUROPYPE_BASE_URL_ENV':
-				message = 'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
+				message =
+					'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
 				break
 
 			default:

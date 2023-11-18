@@ -5,12 +5,12 @@ import AbstractSpruceTest, {
 	generateId,
 } from '@sprucelabs/test-utils'
 import Pipeline from '../../Pipeline'
-import AxiosStub from './AxiosStub'
+import AxiosStub from '../AxiosStub'
 
 export default class PipelineTest extends AbstractSpruceTest {
 	private static pipeline: SpyPipeline
 	private static emptyPipelinePath: string
-	private static stubAxios: AxiosStub
+	private static axiosStub: AxiosStub
 	private static executionId: string
 
 	protected static async beforeEach() {
@@ -23,14 +23,14 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		this.executionId = generateId()
 
-		this.stubAxios = new AxiosStub()
+		this.axiosStub = new AxiosStub()
 		Pipeline.Class = SpyPipeline
-		Pipeline.axios = this.stubAxios
+		Pipeline.axios = this.axiosStub
 
-		delete this.stubAxios.responseToPost
+		delete this.axiosStub.responseToPost
 		this.resetLastPostParams()
-		delete this.stubAxios.lastPatchParams
-		delete this.stubAxios.lastDeleteParams
+		delete this.axiosStub.lastPatchParams
+		delete this.axiosStub.lastDeleteParams
 
 		this.pipeline = (await Pipeline.Pipeline({
 			path: this.emptyPipelinePath,
@@ -66,7 +66,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async constructingPipelineCreatesExecution() {
 		await Pipeline.Pipeline({ path: this.emptyPipelinePath })
 
-		assert.isEqualDeep(this.stubAxios.lastPostParams, {
+		assert.isEqualDeep(this.axiosStub.lastPostParams, {
 			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
 			data: undefined,
 			config: undefined,
@@ -76,7 +76,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async canStartExecution() {
 		await this.pipeline.start()
-		assert.isEqualDeep(this.stubAxios.lastPostParams, {
+		assert.isEqualDeep(this.axiosStub.lastPostParams, {
 			url: this.executionUrl,
 			config: undefined,
 			data: {
@@ -89,7 +89,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async canStopExecution() {
 		await this.pipeline.stop()
-		assert.isEqualDeep(this.stubAxios.lastPatchParams, {
+		assert.isEqualDeep(this.axiosStub.lastPatchParams, {
 			url: this.executionUrl,
 			config: undefined,
 			data: {
@@ -101,7 +101,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async resetKillsExecution() {
 		await this.pipeline.reset()
-		assert.isEqualDeep(this.stubAxios.lastDeleteParams, {
+		assert.isEqualDeep(this.axiosStub.lastDeleteParams, {
 			url: this.executionUrl,
 		})
 	}
@@ -113,7 +113,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		await this.pipeline.reset()
 
-		assert.isEqualDeep(this.stubAxios.lastPostParams, {
+		assert.isEqualDeep(this.axiosStub.lastPostParams, {
 			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
 			data: undefined,
 			config: undefined,
@@ -130,7 +130,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	private static resetLastPostParams() {
-		delete this.stubAxios.lastPostParams
+		delete this.axiosStub.lastPostParams
 		this.fakeCreateExeuction()
 	}
 
@@ -139,7 +139,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	private static fakeCreateExeuction() {
-		this.stubAxios.responseToPost = {
+		this.axiosStub.responseToPost = {
 			data: {
 				id: this.executionId,
 			},

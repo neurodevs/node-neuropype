@@ -1,6 +1,8 @@
 {
-  "name": "node-neuropype",
+  "name": "@neurodevs/node-neuropype",
   "version": "0.0.1",
+  "main": "build/index.js",
+  "repository": "https://github.com/neurodevs/node-neuropype.git",
   "scripts": {
     "build.ci": "yarn build.tsc && yarn build.resolve-paths && yarn lint",
     "build.dev": "yarn build.tsc --sourceMap ; yarn resolve-paths.lint",
