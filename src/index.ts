@@ -1,2 +1,2 @@
-export { default as Pipeline } from './Pipeline'
+export { default as PipelineImpl } from './Pipeline'
 export * from './Pipeline'

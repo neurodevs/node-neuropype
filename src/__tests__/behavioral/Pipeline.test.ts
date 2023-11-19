@@ -4,7 +4,7 @@ import AbstractSpruceTest, {
 	errorAssert,
 	generateId,
 } from '@sprucelabs/test-utils'
-import Pipeline from '../../Pipeline'
+import PipelineImpl from '../../Pipeline'
 import AxiosStub from '../AxiosStub'
 
 export default class PipelineTest extends AbstractSpruceTest {
@@ -22,17 +22,17 @@ export default class PipelineTest extends AbstractSpruceTest {
 		)
 
 		this.executionId = generateId()
-
 		this.axiosStub = new AxiosStub()
-		Pipeline.Class = SpyPipeline
-		Pipeline.axios = this.axiosStub
+
+		PipelineImpl.Class = SpyPipeline
+		PipelineImpl.axios = this.axiosStub
 
 		delete this.axiosStub.responseToPost
 		delete this.axiosStub.lastPatchParams
 		delete this.axiosStub.lastDeleteParams
 		this.resetLastPostParams()
 
-		this.pipeline = (await Pipeline.Pipeline({
+		this.pipeline = (await PipelineImpl.Pipeline({
 			path: this.emptyPipelinePath,
 		})) as SpyPipeline
 	}
@@ -40,7 +40,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async throwsWithMissingParams() {
 		//@ts-ignore
-		const err = await assert.doesThrowAsync(() => Pipeline.Pipeline())
+		const err = await assert.doesThrowAsync(() => PipelineImpl.Pipeline())
 		errorAssert.assertError(err, 'MISSING_PARAMETERS', { parameters: ['path'] })
 	}
 
@@ -48,7 +48,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async throwsWhenPathDoesNotEndInPyp() {
 		const invalidPath = generateId()
 		const err = await assert.doesThrowAsync(() =>
-			Pipeline.Pipeline({ path: invalidPath })
+			PipelineImpl.Pipeline({ path: invalidPath })
 		)
 		errorAssert.assertError(err, 'INVALID_PIPELINE_FORMAT', {
 			path: invalidPath,
@@ -59,7 +59,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async throwsWithPipelineNotFound() {
 		const missingPath = `${generateId()}.pyp`
 		const err = await assert.doesThrowAsync(() =>
-			Pipeline.Pipeline({ path: missingPath })
+			PipelineImpl.Pipeline({ path: missingPath })
 		)
 		errorAssert.assertError(err, 'PIPELINE_NOT_FOUND', { path: missingPath })
 	}
@@ -68,14 +68,14 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async throwsWithMissingEnv() {
 		delete process.env.NEUROPYPE_BASE_URL
 		const err = await assert.doesThrowAsync(() =>
-			Pipeline.Pipeline({ path: generateId() })
+			PipelineImpl.Pipeline({ path: generateId() })
 		)
 		errorAssert.assertError(err, 'MISSING_NEUROPYPE_BASE_URL_ENV')
 	}
 
 	@test()
 	protected static async creatingPipelineCreatesExecutionAndLoadsPipeline() {
-		await Pipeline.Pipeline({ path: this.emptyPipelinePath })
+		await PipelineImpl.Pipeline({ path: this.emptyPipelinePath })
 
 		const createExecutionParams = this.axiosStub.postParamsHistory[0]
 		assert.isEqualDeep(createExecutionParams, {
@@ -176,7 +176,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 }
 
-class SpyPipeline extends Pipeline {
+class SpyPipeline extends PipelineImpl {
 	public constructor(...args: any[]) {
 		//@ts-ignore
 		super(...args)

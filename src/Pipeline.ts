@@ -3,7 +3,7 @@ import { assertOptions } from '@sprucelabs/schema'
 import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
 
-export default class Pipeline {
+export default class PipelineImpl implements Pipeline {
 	public static axios: Axios = axios
 	public static Class: new (options: PipelineConstructorOptions) => Pipeline
 
@@ -29,7 +29,6 @@ export default class Pipeline {
 
 		const pipeline = new (this.Class ?? this)({ baseUrl, path })
 
-		await pipeline.createExecution()
 		await pipeline.load()
 
 		return pipeline
@@ -51,7 +50,8 @@ export default class Pipeline {
 		return `${this.baseUrl}/executions/${this.executionId}`
 	}
 
-	private async load() {
+	public async load() {
+		await this.createExecution()
 		await this.axios.post(`${this.executionUrl}/actions/load`, {
 			file: this.path,
 			what: 'graph',
@@ -79,7 +79,7 @@ export default class Pipeline {
 	public async update(_parameters: Record<string, any>) {}
 
 	private get axios() {
-		return Pipeline.axios
+		return PipelineImpl.axios
 	}
 }
 
@@ -90,4 +90,12 @@ interface PipelineOptions {
 interface PipelineConstructorOptions {
 	baseUrl: string
 	path: string
+}
+
+export interface Pipeline {
+	load(): unknown
+	start(): Promise<void>
+	stop(): Promise<void>
+	reset(): Promise<void>
+	update(parameters: Record<string, any>): Promise<void>
 }
