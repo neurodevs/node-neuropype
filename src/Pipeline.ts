@@ -87,7 +87,7 @@ interface PipelineOptions {
 	path: string
 }
 
-interface PipelineConstructorOptions {
+export interface PipelineConstructorOptions {
 	baseUrl: string
 	path: string
 }
