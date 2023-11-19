@@ -10,15 +10,17 @@ import {
 
 export default class AxiosStub implements Axios {
 	public defaults = {} as AxiosDefaults
+
 	public interceptors = {
 		request: {} as AxiosInterceptorManager<InternalAxiosRequestConfig<any>>,
 		response: {} as AxiosInterceptorManager<AxiosResponse<any, any>>,
 	}
-	public lastPostParams?: {
+
+	public postParamsHistory: {
 		url: string
 		data?: any
 		config?: any
-	}
+	}[] = []
 
 	public lastPatchParams?: {
 		url: string
@@ -78,11 +80,11 @@ export default class AxiosStub implements Axios {
 		data?: D | undefined,
 		config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
-		this.lastPostParams = {
+		this.postParamsHistory.push({
 			url,
 			data,
 			config,
-		}
+		})
 		return (this.responseToPost as R) ?? ({} as R)
 	}
 

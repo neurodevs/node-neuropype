@@ -47,8 +47,21 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async pipelineThrowsWhenPathDoesNotEndInPyp() {
 		const invalidPath = generateId()
-		const err = await assert.doesThrowAsync(() => Pipeline.Pipeline({path: invalidPath}))
-		errorAssert.assertError(err, 'INVALID_PIPELINE_FORMAT')
+		const err = await assert.doesThrowAsync(() =>
+			Pipeline.Pipeline({ path: invalidPath })
+		)
+		errorAssert.assertError(err, 'INVALID_PIPELINE_FORMAT', {
+			path: invalidPath,
+		})
+	}
+
+	@test()
+	protected static async pipelineThrowsWithPipelineNotFound() {
+		const missingPath = `${generateId()}.pyp`
+		const err = await assert.doesThrowAsync(() =>
+			Pipeline.Pipeline({ path: missingPath })
+		)
+		errorAssert.assertError(err, 'PIPELINE_NOT_FOUND', { path: missingPath })
 	}
 
 	@test()
@@ -61,28 +74,33 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async pipelineThrowsWithPipelineNotFound() {
-		const pipelinePath = `${generateId()}.pyp`
-		const err = await assert.doesThrowAsync(() =>
-			Pipeline.Pipeline({ path: pipelinePath })
-		)
-		errorAssert.assertError(err, 'PIPELINE_NOT_FOUND', { path: pipelinePath })
-	}
-
-	@test()
-	protected static async constructingPipelineCreatesExecution() {
+	protected static async creatingPipelineCreatesExecutionAndLoadsPipeline() {
 		await Pipeline.Pipeline({ path: this.emptyPipelinePath })
-		assert.isEqualDeep(this.axiosStub.lastPostParams, {
+
+		const createExecutionParams = this.axiosStub.postParamsHistory[0]
+		assert.isEqualDeep(createExecutionParams, {
 			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
 			data: undefined,
 			config: undefined,
+		})
+
+		const loadParams = this.axiosStub.postParamsHistory[1]
+		assert.isEqualDeep(loadParams, {
+			url: `${this.executionUrl}/actions/load`,
+			config: undefined,
+			data: {
+				file: this.emptyPipelinePath,
+				what: 'graph',
+			},
 		})
 	}
 
 	@test()
 	protected static async canRunPipeline() {
-		await this.pipeline.run()
-		assert.isEqualDeep(this.axiosStub.lastPostParams, {
+		await this.pipeline.start()
+
+		const runParams = this.axiosStub.postParamsHistory[2]
+		assert.isEqualDeep(runParams, {
 			url: this.executionUrl,
 			config: undefined,
 			data: {
@@ -119,7 +137,8 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		await this.pipeline.reset()
 
-		assert.isEqualDeep(this.axiosStub.lastPostParams, {
+		const createExecutionParams = this.axiosStub.postParamsHistory[0]
+		assert.isEqualDeep(createExecutionParams, {
 			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
 			data: undefined,
 			config: undefined,
@@ -135,22 +154,11 @@ export default class PipelineTest extends AbstractSpruceTest {
 		})
 	}
 
-	// @property
-    // def load_url(self):
-    //     """ Generates the URL for loading pipelines """
-    //     return posixpath.join(self.execution_id_url, 'actions/load')
-    // def _load_pipeline(self):
-    //     """ Loads a pipeline into the running execution """
-    //     properties = {'file': self.pipeline_path, 'what': 'graph'}
-    //     response = requests.post(self.load_url, json=properties)
-    //     logger.debug(f'Loaded {self.name} pipeline...')
-    //     logger.debug(f'Received response: {response}...')
-
 	private static resetLastPostParams() {
-		delete this.axiosStub.lastPostParams
+		this.axiosStub.postParamsHistory = []
 		this.fakeCreateExecution()
 	}
-	
+
 	private static fakeCreateExecution() {
 		this.axiosStub.responseToPost = {
 			data: {

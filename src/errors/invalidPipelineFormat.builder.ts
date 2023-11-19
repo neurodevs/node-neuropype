@@ -1,5 +1,4 @@
-import  { buildErrorSchema } from '@sprucelabs/schema'
-
+import { buildErrorSchema } from '@sprucelabs/schema'
 
 export default buildErrorSchema({
 	id: 'invalidPipelineFormat',
@@ -7,8 +6,7 @@ export default buildErrorSchema({
 	fields: {
 		path: {
 			type: 'text',
-			isRequired: true
+			isRequired: true,
 		},
-	}
+	},
 })
-
