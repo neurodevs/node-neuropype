@@ -1,2 +1,2 @@
 # node-neuropype
-A Node wrapper for the Neuropype API
+A Node + TypeScript wrapper for the Neuropype API
