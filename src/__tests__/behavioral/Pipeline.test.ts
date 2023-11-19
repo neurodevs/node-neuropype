@@ -65,7 +65,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async pipelineThrowsWithMissingNeuropypeBaseUrlEnv() {
+	protected static async pipelineThrowsWithMissingEnv() {
 		delete process.env.NEUROPYPE_BASE_URL
 		const err = await assert.doesThrowAsync(() =>
 			Pipeline.Pipeline({ path: generateId() })
