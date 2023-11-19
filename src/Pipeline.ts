@@ -17,10 +17,14 @@ export default class Pipeline {
 
 	public static async Pipeline(options: PipelineOptions) {
 		const { path } = assertOptions(options, ['path'])
-
 		const baseUrl = process.env.NEUROPYPE_BASE_URL
+		
 		if (!baseUrl) {
 			throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+		}
+
+		if (!path.endsWith('.pyp')) {
+			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT'})
 		}
 
 		if (!fs.existsSync(path)) {
@@ -34,39 +38,40 @@ export default class Pipeline {
 		return pipeline
 	}
 
-	protected get executionUrl() {
-		return `${this.baseUrl}/executions/${this.executionId}`
-	}
-
+	
 	private async createExecution() {
 		const { data } = await this.axios.post(this.baseUrl + '/executions')
 		const { id } = data
 		this.executionId = id
 	}
-
-	private get axios() {
-		return Pipeline.axios
+	
+	protected get executionUrl() {
+		return `${this.baseUrl}/executions/${this.executionId}`
 	}
-
-	public async start() {
+	
+	public async run() {
 		await this.axios.post(this.executionUrl, {
 			running: true,
 			paused: false,
 		})
 	}
-
+	
 	public async stop() {
 		await this.axios.patch(this.executionUrl, {
 			running: false,
 		})
 	}
-
+	
 	public async reset() {
 		await this.axios.delete(this.executionUrl)
 		await this.createExecution()
 	}
-
+	
 	public async update(_parameters: Record<string, any>) {}
+	
+	private get axios() {
+		return Pipeline.axios
+	}
 }
 
 interface PipelineOptions {

@@ -7,6 +7,10 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
 		const { options } = this
 		let message
 		switch (options?.code) {
+            case 'INVALID_PIPELINE_FORMAT':
+                message = `Pipeline path must end in .pyp! Found: ${options.path}`
+                break
+
 			case 'PIPELINE_NOT_FOUND':
 				message = `Pipeline not found: ${options.path}!`
 				break
@@ -16,7 +20,7 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
 					'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
 				break
 
-			default:
+default:
 				message = super.friendlyMessage()
 		}
 

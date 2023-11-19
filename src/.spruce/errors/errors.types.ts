@@ -58,4 +58,33 @@ export declare namespace SpruceErrors.NodeNeuropype {
 
 
 
+export declare namespace SpruceErrors.NodeNeuropype {
+
+	
+	export interface InvalidPipelineFormat {
+		
+			
+			'path': string
+	}
+
+	export interface InvalidPipelineFormatSchema extends SpruceSchema.Schema {
+		id: 'invalidPipelineFormat',
+		namespace: 'NodeNeuropype',
+		name: 'Invalid pipeline format!',
+		    fields: {
+		            /** . */
+		            'path': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type InvalidPipelineFormatEntity = SchemaEntity<SpruceErrors.NodeNeuropype.InvalidPipelineFormatSchema>
+
+}
+
+
+
 
