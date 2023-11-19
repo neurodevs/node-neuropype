@@ -38,14 +38,14 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async pipelineThrowsWithMissingParams() {
+	protected static async throwsWithMissingParams() {
 		//@ts-ignore
 		const err = await assert.doesThrowAsync(() => Pipeline.Pipeline())
 		errorAssert.assertError(err, 'MISSING_PARAMETERS', { parameters: ['path'] })
 	}
 
 	@test()
-	protected static async pipelineThrowsWhenPathDoesNotEndInPyp() {
+	protected static async throwsWhenPathDoesNotEndInPyp() {
 		const invalidPath = generateId()
 		const err = await assert.doesThrowAsync(() =>
 			Pipeline.Pipeline({ path: invalidPath })
@@ -56,7 +56,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async pipelineThrowsWithPipelineNotFound() {
+	protected static async throwsWithPipelineNotFound() {
 		const missingPath = `${generateId()}.pyp`
 		const err = await assert.doesThrowAsync(() =>
 			Pipeline.Pipeline({ path: missingPath })
@@ -65,7 +65,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async pipelineThrowsWithMissingEnv() {
+	protected static async throwsWithMissingEnv() {
 		delete process.env.NEUROPYPE_BASE_URL
 		const err = await assert.doesThrowAsync(() =>
 			Pipeline.Pipeline({ path: generateId() })
