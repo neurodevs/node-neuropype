@@ -1,4 +1,3 @@
-import fs from 'fs'
 import { assertOptions } from '@sprucelabs/schema'
 import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
@@ -23,9 +22,11 @@ export default class PipelineImpl implements Pipeline {
 			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
 		}
 
-		if (!fs.existsSync(path)) {
-			throw new SpruceError({ path, code: 'PIPELINE_NOT_FOUND' })
-		}
+		// Disabled because of Mac Mini to Windows path issues.
+		// Should be re-implemented once we have a better way to test this.
+		// if (!fs.existsSync(path)) {
+		// 	throw new SpruceError({ path, code: 'PIPELINE_NOT_FOUND' })
+		// }
 
 		const pipeline = new (this.Class ?? this)({ baseUrl, path })
 
