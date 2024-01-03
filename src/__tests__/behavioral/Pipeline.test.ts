@@ -79,12 +79,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async creatingPipelineCreatesExecutionAndLoadsPipeline() {
 		await PipelineImpl.Pipeline({ path: this.emptyPipelinePath })
 
-		const createExecutionParams = this.axiosStub.postParamsHistory[0]
-		assert.isEqualDeep(createExecutionParams, {
-			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
-			data: undefined,
-			config: undefined,
-		})
+		this.assertFirstPostParamsEqualsExpected()
 
 		const loadParams = this.axiosStub.postParamsHistory[1]
 		assert.isEqualDeep(loadParams, {
@@ -139,13 +134,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		await this.pipeline.reset()
 
-		const createExecutionParams = this.axiosStub.postParamsHistory[0]
-		assert.isEqualDeep(createExecutionParams, {
-			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
-			data: undefined,
-			config: undefined,
-		})
-
+		this.assertFirstPostParamsEqualsExpected()
 		assert.isEqual(this.pipeline.getExecutionUrl(), this.executionUrl)
 	}
 
@@ -171,6 +160,16 @@ export default class PipelineTest extends AbstractSpruceTest {
 			statusText: 'OK',
 			headers: {},
 		}
+	}
+
+	private static assertFirstPostParamsEqualsExpected() {
+		const createExecutionParams = this.axiosStub.postParamsHistory[0]
+
+		assert.isEqualDeep(createExecutionParams, {
+			url: `${process.env.NEUROPYPE_BASE_URL}/executions`,
+			data: {},
+			config: undefined,
+		})
 	}
 
 	private static get executionUrl() {

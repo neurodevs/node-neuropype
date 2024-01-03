@@ -43,7 +43,7 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	private async createExecution() {
-		const { data } = await this.post(this.baseUrl + '/executions')
+		const { data } = await this.post(this.baseUrl + '/executions', {})
 		const { id } = data
 		this.executionId = id
 	}
