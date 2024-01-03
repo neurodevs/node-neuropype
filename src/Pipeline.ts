@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { assertOptions } from '@sprucelabs/schema'
+import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
 
@@ -10,6 +11,7 @@ export default class PipelineImpl implements Pipeline {
 	private baseUrl: string
 	private path: string
 	private executionId?: string
+	private log = buildLog('PipelineImpl')
 
 	public static async Pipeline(options: PipelineOptions) {
 		const { path } = assertOptions(options, ['path'])
@@ -41,7 +43,7 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	private async createExecution() {
-		const { data } = await this.axios.post(this.baseUrl + '/executions')
+		const { data } = await this.post(this.baseUrl + '/executions')
 		const { id } = data
 		this.executionId = id
 	}
@@ -52,10 +54,19 @@ export default class PipelineImpl implements Pipeline {
 
 	public async load() {
 		await this.createExecution()
-		await this.axios.post(`${this.executionUrl}/actions/load`, {
-			file: this.path,
-			what: 'graph',
-		})
+		await this.post(`${this.executionUrl}/actions/load`)
+	}
+
+	private async post(url: string) {
+		try {
+			return await this.axios.post(url, {
+				file: this.path,
+				what: 'graph',
+			})
+		} catch (err) {
+			this.log.error('Failed to load pipeline', this.path, url)
+			throw err
+		}
 	}
 
 	public async start() {
