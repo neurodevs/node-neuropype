@@ -98,7 +98,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		const runParams = this.axiosStub.patchParamsHistory[0]
 		assert.isEqualDeep(runParams, {
-			url: this.executionUrl,
+			url: this.stateUrl,
 			config: undefined,
 			data: {
 				running: true,
@@ -111,7 +111,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async canStopPipeline() {
 		await this.pipeline.stop()
 		assert.isEqualDeep(this.axiosStub.patchParamsHistory[0], {
-			url: this.executionUrl,
+			url: this.stateUrl,
 			config: undefined,
 			data: {
 				running: false,
@@ -175,6 +175,10 @@ export default class PipelineTest extends AbstractSpruceTest {
 	private static get executionUrl() {
 		return `${process.env.NEUROPYPE_BASE_URL}/executions/${this.executionId}`
 	}
+
+	private static get stateUrl() {
+		return `${this.executionUrl}/state`
+	}
 }
 
 class SpyPipeline extends PipelineImpl {
@@ -184,6 +188,6 @@ class SpyPipeline extends PipelineImpl {
 	}
 
 	public getExecutionUrl() {
-		return this.executionUrl
+		return this.executionIdUrl
 	}
 }

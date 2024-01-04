@@ -43,16 +43,40 @@ export default class PipelineImpl implements Pipeline {
 		this.executionId = id
 	}
 
-	protected get executionUrl() {
-		return `${this.baseUrl}/executions/${this.executionId}`
-	}
-
 	public async load() {
 		await this.createExecution()
-		await this.post(`${this.executionUrl}/actions/load`, {
+		await this.post(`${this.executionIdUrl}/actions/load`, {
 			file: this.path,
 			what: 'graph',
 		})
+	}
+
+	public async start() {
+		await this.patch(this.stateUrl, {
+			running: true,
+			paused: false,
+		})
+	}
+
+	public async stop() {
+		await this.patch(this.stateUrl, {
+			running: false,
+		})
+	}
+
+	public async reset() {
+		await this.axios.delete(this.executionIdUrl)
+		await this.createExecution()
+	}
+
+	public async update(_parameters: Record<string, any>) {}
+
+	protected get executionIdUrl() {
+		return `${this.baseUrl}/executions/${this.executionId}`
+	}
+
+	protected get stateUrl(): string {
+		return this.executionIdUrl + '/state'
 	}
 
 	private async post(url: string, args?: Record<string, any>) {
@@ -64,13 +88,6 @@ export default class PipelineImpl implements Pipeline {
 		}
 	}
 
-	public async start() {
-		await this.patch(this.executionUrl, {
-			running: true,
-			paused: false,
-		})
-	}
-
 	private async patch(url: string, args?: Record<string, any>) {
 		try {
 			return await this.axios.patch(url, args)
@@ -79,19 +96,6 @@ export default class PipelineImpl implements Pipeline {
 			throw err
 		}
 	}
-
-	public async stop() {
-		await this.axios.patch(this.executionUrl, {
-			running: false,
-		})
-	}
-
-	public async reset() {
-		await this.axios.delete(this.executionUrl)
-		await this.createExecution()
-	}
-
-	public async update(_parameters: Record<string, any>) {}
 
 	private get axios() {
 		return PipelineImpl.axios
