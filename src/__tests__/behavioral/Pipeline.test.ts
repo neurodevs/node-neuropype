@@ -261,7 +261,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	private static async update(params?: Record<string, any>) {
-		await this.pipeline.update(params)
+		await this.pipeline.update(params ?? {})
 	}
 
 	private static resetLastPostParams() {
