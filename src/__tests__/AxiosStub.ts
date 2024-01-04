@@ -32,7 +32,13 @@ export default class AxiosStub implements Axios {
 		url: string
 	}
 
+	public deleteParamsHistory: {
+		url: string
+	}[] = []
+
 	public responseToPost?: AxiosResponse<any, any>
+	public lastGetUrl?: string
+	public fakedGetResponse?: AxiosResponse<any, any>
 
 	public getUri(_config?: AxiosRequestConfig<any> | undefined): string {
 		return generateId()
@@ -45,10 +51,11 @@ export default class AxiosStub implements Axios {
 	}
 
 	public async get<T = any, R = AxiosResponse<T, any>, D = any>(
-		_url: string,
+		url: string,
 		_config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
-		return {} as R
+		this.lastGetUrl = url
+		return (this.fakedGetResponse as R) ?? ({} as R)
 	}
 
 	public async delete<T = any, R = AxiosResponse<T, any>, D = any>(
@@ -58,6 +65,10 @@ export default class AxiosStub implements Axios {
 		this.lastDeleteParams = {
 			url,
 		}
+
+		this.deleteParamsHistory.push({
+			url,
+		})
 		return {} as R
 	}
 

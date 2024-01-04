@@ -6,6 +6,7 @@ import AbstractSpruceTest, {
 } from '@sprucelabs/test-utils'
 import PipelineImpl from '../../Pipeline'
 import AxiosStub from '../AxiosStub'
+import { generateFakedAxiosResponse } from './generateFakedAxiosResponse'
 
 export default class PipelineTest extends AbstractSpruceTest {
 	private static pipeline: SpyPipeline
@@ -151,15 +152,10 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	private static fakeCreateExecution() {
-		this.axiosStub.responseToPost = {
-			data: {
-				id: this.executionId,
-			},
-			config: {} as any,
-			status: 200,
-			statusText: 'OK',
-			headers: {},
+		const data = {
+			id: this.executionId,
 		}
+		this.axiosStub.responseToPost = generateFakedAxiosResponse(data)
 	}
 
 	private static assertFirstPostParamsEqualsExpected() {
