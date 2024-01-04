@@ -69,7 +69,10 @@ export default class PipelineImpl implements Pipeline {
 		await this.createExecution()
 	}
 
-	public async update(_parameters: Record<string, any>) {}
+	public async update(_parameters: Record<string, any>) {
+		const { data } = await this.axios.get(this.executionIdUrl + '/graph/nodes')
+		console.error(data)
+	}
 
 	protected get executionIdUrl() {
 		return `${this.baseUrl}/executions/${this.executionId}`

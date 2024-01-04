@@ -84,7 +84,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		const loadParams = this.axiosStub.postParamsHistory[1]
 		assert.isEqualDeep(loadParams, {
-			url: `${this.executionUrl}/actions/load`,
+			url: `${this.executionIdUrl}/actions/load`,
 			config: undefined,
 			data: {
 				file: this.emptyPipelinePath,
@@ -124,7 +124,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async resetKillsExecution() {
 		await this.pipeline.reset()
 		assert.isEqualDeep(this.axiosStub.lastDeleteParams, {
-			url: this.executionUrl,
+			url: this.executionIdUrl,
 		})
 	}
 
@@ -136,14 +136,19 @@ export default class PipelineTest extends AbstractSpruceTest {
 		await this.pipeline.reset()
 
 		this.assertFirstPostParamsEqualsExpected()
-		assert.isEqual(this.pipeline.getExecutionUrl(), this.executionUrl)
+		assert.isEqual(this.pipeline.getExecutionUrl(), this.executionIdUrl)
 	}
 
 	@test()
-	protected static async canUpdateParams() {
+	protected static async updateStartsByGettingAllNodes() {
 		await this.pipeline.update({
 			hello: 'world',
 		})
+
+		assert.isEqualDeep(
+			this.axiosStub.lastGetUrl,
+			this.executionIdUrl + '/graph/nodes'
+		)
 	}
 
 	private static resetLastPostParams() {
@@ -168,12 +173,12 @@ export default class PipelineTest extends AbstractSpruceTest {
 		})
 	}
 
-	private static get executionUrl() {
+	private static get executionIdUrl() {
 		return `${process.env.NEUROPYPE_BASE_URL}/executions/${this.executionId}`
 	}
 
 	private static get stateUrl() {
-		return `${this.executionUrl}/state`
+		return `${this.executionIdUrl}/state`
 	}
 }
 
