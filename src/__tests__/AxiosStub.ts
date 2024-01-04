@@ -9,6 +9,7 @@ import {
 } from 'axios'
 
 export default class AxiosStub implements Axios {
+	public lastPatchUrl?: string
 	public lastPutUrl?: string
 	public getHistory: string[] = []
 	public defaults = {} as AxiosDefaults
@@ -126,6 +127,7 @@ export default class AxiosStub implements Axios {
 			data,
 			config,
 		})
+		this.lastPatchUrl = url
 		return {} as R
 	}
 

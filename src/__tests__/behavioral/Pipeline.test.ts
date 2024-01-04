@@ -186,7 +186,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	}
 
 	@test()
-	protected static async callsPutToUpdateTheParamThatMatchesPortnameValue() {
+	protected static async callsPatchToUpdateTheParamThatMatchesPortnameValue() {
 		const updateKey = generateId()
 		const updateValue = generateId()
 
@@ -198,11 +198,13 @@ export default class PipelineTest extends AbstractSpruceTest {
 		await this.update({ [updateKey]: updateValue })
 
 		assert.isEqual(
-			this.axiosStub.lastPutUrl,
-			this.generateDefaultValuesUrl(node.id)
+			this.axiosStub.lastPatchUrl,
+			this.generateUpdateParametersUrl(node.id)
 		)
 
-		assert.isEqualDeep(this.axiosStub.lastPutParams, updateValue)
+		assert.isEqualDeep(this.axiosStub.patchParamsHistory[0].data, {
+			value: updateValue,
+		})
 	}
 
 	@test()
@@ -223,7 +225,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 		const value = generateId()
 		await this.update({ [updateKey]: value })
-		assert.isFalsy(this.axiosStub.lastPutUrl)
+		assert.isFalsy(this.axiosStub.lastPatchUrl)
 	}
 
 	private static fakeResponseForPortnameValue(id: string, updateKey: string) {
@@ -231,8 +233,8 @@ export default class PipelineTest extends AbstractSpruceTest {
 			generateFakedAxiosResponse(updateKey)
 	}
 
-	private static generateDefaultValuesUrl(id: string) {
-		return this.executionIdUrl + `/graph/nodes/${id}/parameters/default/value`
+	private static generateUpdateParametersUrl(id: string) {
+		return this.executionIdUrl + `/graph/nodes/${id}/parameters`
 	}
 
 	private static assertGetAtIndexCheckForPortNameValueOfNode(

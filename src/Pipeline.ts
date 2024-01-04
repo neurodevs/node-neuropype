@@ -79,19 +79,16 @@ export default class PipelineImpl implements Pipeline {
 					this.generatePortnameValueUrl(node.id)
 				)
 				if (parameters?.[data]) {
-					await this.axios.put(
-						this.generateDefaultValueUrl(node.id),
-						parameters[data]
-					)
+					await this.axios.patch(this.generateUpdateParametersUrl(node.id), {
+						value: parameters[data],
+					})
 				}
 			}
 		}
 	}
 
-	private generateDefaultValueUrl(id: string): string {
-		return (
-			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/default/value'
-		)
+	private generateUpdateParametersUrl(id: string): string {
+		return this.executionIdUrl + '/graph/nodes/' + id + '/parameters'
 	}
 
 	private generatePortnameValueUrl(id: string): string {
