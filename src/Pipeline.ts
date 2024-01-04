@@ -69,9 +69,35 @@ export default class PipelineImpl implements Pipeline {
 		await this.createExecution()
 	}
 
-	public async update(_parameters: Record<string, any>) {
+	public async update(parameters: Record<string, any>) {
 		const { data } = await this.axios.get(this.executionIdUrl + '/graph/nodes')
-		console.error(data)
+		const nodes = data as NeuropypeNode[]
+
+		for (const node of nodes) {
+			if (node.type === 'ParameterPort') {
+				const { data } = await this.axios.get(
+					this.generatePortnameValueUrl(node.id)
+				)
+				if (parameters?.[data]) {
+					await this.axios.put(
+						this.generateDefaultValueUrl(node.id),
+						parameters[data]
+					)
+				}
+			}
+		}
+	}
+
+	private generateDefaultValueUrl(id: string): string {
+		return (
+			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/default/value'
+		)
+	}
+
+	private generatePortnameValueUrl(id: string): string {
+		return (
+			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/portname/value'
+		)
 	}
 
 	protected get executionIdUrl() {
@@ -120,4 +146,9 @@ export interface Pipeline {
 	stop(): Promise<void>
 	reset(): Promise<void>
 	update(parameters: Record<string, any>): Promise<void>
+}
+
+interface NeuropypeNode {
+	id: string
+	type: string
 }

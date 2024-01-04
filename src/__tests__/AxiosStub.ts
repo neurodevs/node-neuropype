@@ -9,6 +9,8 @@ import {
 } from 'axios'
 
 export default class AxiosStub implements Axios {
+	public lastPutUrl?: string
+	public getHistory: string[] = []
 	public defaults = {} as AxiosDefaults
 
 	public interceptors = {
@@ -39,6 +41,8 @@ export default class AxiosStub implements Axios {
 	public responseToPost?: AxiosResponse<any, any>
 	public lastGetUrl?: string
 	public fakedGetResponse?: AxiosResponse<any, any>
+	public fakeGetResponsesByUrl: Record<string, AxiosResponse<any, any>> = {}
+	public lastPutParams?: any
 
 	public getUri(_config?: AxiosRequestConfig<any> | undefined): string {
 		return generateId()
@@ -55,7 +59,10 @@ export default class AxiosStub implements Axios {
 		_config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
 		this.lastGetUrl = url
-		return (this.fakedGetResponse as R) ?? ({} as R)
+		this.getHistory.push(url)
+		return (this.fakeGetResponsesByUrl[url] ??
+			(this.fakedGetResponse as R) ??
+			({} as R)) as R
 	}
 
 	public async delete<T = any, R = AxiosResponse<T, any>, D = any>(
@@ -100,10 +107,12 @@ export default class AxiosStub implements Axios {
 	}
 
 	public async put<T = any, R = AxiosResponse<T, any>, D = any>(
-		_url: string,
-		_data?: D | undefined,
+		url: string,
+		data?: D | undefined,
 		_config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
+		this.lastPutUrl = url
+		this.lastPutParams = data
 		return {} as R
 	}
 
