@@ -9,9 +9,14 @@ export default class Executions {
 		}
 
 		const { data } = await this.axios.get(`${this.baseUrl}/executions`)
+		const promises: Promise<any>[] = []
 		for (const execution of data ?? []) {
-			await this.axios.delete(`${this.baseUrl}/executions/${execution.id}`)
+			promises.push(
+				this.axios.delete(`${this.baseUrl}/executions/${execution.id}`)
+			)
 		}
+
+		await Promise.all(promises)
 	}
 
 	private static get baseUrl() {
