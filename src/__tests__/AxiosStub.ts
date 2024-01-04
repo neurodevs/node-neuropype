@@ -22,11 +22,11 @@ export default class AxiosStub implements Axios {
 		config?: any
 	}[] = []
 
-	public lastPatchParams?: {
+	public patchParamsHistory: {
 		url: string
 		data?: any
 		config?: any
-	}
+	}[] = []
 
 	public lastDeleteParams?: {
 		url: string
@@ -101,11 +101,11 @@ export default class AxiosStub implements Axios {
 		data?: D | undefined,
 		config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
-		this.lastPatchParams = {
+		this.patchParamsHistory.push({
 			url,
 			data,
 			config,
-		}
+		})
 		return {} as R
 	}
 

@@ -28,8 +28,8 @@ export default class PipelineTest extends AbstractSpruceTest {
 		PipelineImpl.axios = this.axiosStub
 
 		delete this.axiosStub.responseToPost
-		delete this.axiosStub.lastPatchParams
 		delete this.axiosStub.lastDeleteParams
+		this.axiosStub.patchParamsHistory = []
 		this.resetLastPostParams()
 
 		this.pipeline = (await PipelineImpl.Pipeline({
@@ -96,7 +96,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	protected static async canRunPipeline() {
 		await this.pipeline.start()
 
-		const runParams = this.axiosStub.postParamsHistory[2]
+		const runParams = this.axiosStub.patchParamsHistory[0]
 		assert.isEqualDeep(runParams, {
 			url: this.executionUrl,
 			config: undefined,
@@ -110,7 +110,7 @@ export default class PipelineTest extends AbstractSpruceTest {
 	@test()
 	protected static async canStopPipeline() {
 		await this.pipeline.stop()
-		assert.isEqualDeep(this.axiosStub.lastPatchParams, {
+		assert.isEqualDeep(this.axiosStub.patchParamsHistory[0], {
 			url: this.executionUrl,
 			config: undefined,
 			data: {

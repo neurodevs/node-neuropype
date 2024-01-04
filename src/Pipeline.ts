@@ -65,10 +65,19 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	public async start() {
-		await this.post(this.executionUrl, {
+		await this.patch(this.executionUrl, {
 			running: true,
 			paused: false,
 		})
+	}
+
+	private async patch(url: string, args?: Record<string, any>) {
+		try {
+			return await this.axios.patch(url, args)
+		} catch (err) {
+			this.log.error('Failed to patch pipeline', this.path)
+			throw err
+		}
 	}
 
 	public async stop() {
