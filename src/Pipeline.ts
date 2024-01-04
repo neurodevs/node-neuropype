@@ -25,10 +25,6 @@ export default class PipelineImpl implements Pipeline {
 			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
 		}
 
-		if (!fs.existsSync(path)) {
-			throw new SpruceError({ path, code: 'PIPELINE_NOT_FOUND' })
-		}
-
 		const pipeline = new (this.Class ?? this)({ baseUrl, path })
 
 		await pipeline.load()
