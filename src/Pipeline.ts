@@ -75,20 +75,28 @@ export default class PipelineImpl implements Pipeline {
 
 		for (const node of nodes) {
 			if (node.type === 'ParameterPort') {
-				const { data } = await this.axios.get(
+				const { data: portName } = await this.axios.get(
 					this.generatePortnameValueUrl(node.id)
 				)
-				if (parameters?.[data]) {
-					await this.axios.patch(this.generateUpdateParametersUrl(node.id), {
-						value: parameters[data],
-					})
+				if (parameters?.[portName]) {
+					await this.axios.put(
+						this.generateUpdateParametersUrl(node.id),
+						parameters[portName],
+						{
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						}
+					)
 				}
 			}
 		}
 	}
 
 	private generateUpdateParametersUrl(id: string): string {
-		return this.executionIdUrl + '/graph/nodes/' + id + '/parameters'
+		return (
+			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/default/value'
+		)
 	}
 
 	private generatePortnameValueUrl(id: string): string {

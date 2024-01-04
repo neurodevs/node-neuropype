@@ -44,6 +44,7 @@ export default class AxiosStub implements Axios {
 	public fakedGetResponse?: AxiosResponse<any, any>
 	public fakeGetResponsesByUrl: Record<string, AxiosResponse<any, any>> = {}
 	public lastPutParams?: any
+	public lastPutConfig?: AxiosRequestConfig<any> | undefined
 
 	public getUri(_config?: AxiosRequestConfig<any> | undefined): string {
 		return generateId()
@@ -110,10 +111,11 @@ export default class AxiosStub implements Axios {
 	public async put<T = any, R = AxiosResponse<T, any>, D = any>(
 		url: string,
 		data?: D | undefined,
-		_config?: AxiosRequestConfig<D> | undefined
+		config?: AxiosRequestConfig<D> | undefined
 	): Promise<R> {
 		this.lastPutUrl = url
 		this.lastPutParams = data
+		this.lastPutConfig = config
 		return {} as R
 	}
 
