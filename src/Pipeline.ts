@@ -64,6 +64,10 @@ export default class PipelineImpl implements Pipeline {
 		})
 	}
 
+	public async reload(): Promise<void> {
+		await this.axios.post(this.executionIdUrl + '/actions/reload')
+	}
+
 	public async reset() {
 		await this.axios.delete(this.executionIdUrl)
 		await this.createExecution()
@@ -129,10 +133,6 @@ export default class PipelineImpl implements Pipeline {
 			this.log.error('Failed to patch pipeline', this.path)
 			throw err
 		}
-	}
-
-	public async reload(): Promise<void> {
-		await this.axios.post(this.executionIdUrl + '/actions/reload')
 	}
 
 	private get axios() {
