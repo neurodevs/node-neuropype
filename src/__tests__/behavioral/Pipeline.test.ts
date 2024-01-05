@@ -231,6 +231,17 @@ export default class PipelineTest extends AbstractSpruceTest {
 		assert.isFalsy(this.axiosStub.lastPutUrl)
 	}
 
+	@test()
+	protected static async canReloadPipeline() {
+		this.axiosStub.postParamsHistory = []
+		await this.pipeline.reload()
+		assert.isEqualDeep(this.axiosStub.postParamsHistory[0], {
+			url: `${this.executionIdUrl}/actions/reload`,
+			config: undefined,
+			data: undefined,
+		})
+	}
+
 	private static fakeResponseForPortnameValue(id: string, updateKey: string) {
 		this.axiosStub.fakeGetResponsesByUrl[this.generatePortnameValueUrl(id)] =
 			generateFakedAxiosResponse(updateKey)

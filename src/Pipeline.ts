@@ -131,6 +131,10 @@ export default class PipelineImpl implements Pipeline {
 		}
 	}
 
+	public async reload(): Promise<void> {
+		await this.axios.post(this.executionIdUrl + '/actions/reload')
+	}
+
 	private get axios() {
 		return PipelineImpl.axios
 	}
@@ -150,6 +154,7 @@ export interface Pipeline {
 	start(): Promise<void>
 	stop(): Promise<void>
 	reset(): Promise<void>
+	reload(): Promise<void>
 	update(parameters: Record<string, any>): Promise<void>
 }
 
