@@ -5,8 +5,9 @@ import AbstractSpruceTest, {
 	generateId,
 } from '@sprucelabs/test-utils'
 import PipelineImpl from '../../Pipeline'
-import AxiosStub from '../AxiosStub'
-import { generateFakedAxiosResponse } from './generateFakedAxiosResponse'
+import AxiosStub from '../../testDoubles/AxiosStub'
+import { generateFakedAxiosResponse } from '../../testDoubles/generateFakedAxiosResponse'
+import SpyPipeline from '../../testDoubles/SpyPipeline'
 
 export default class PipelineTest extends AbstractSpruceTest {
 	private static pipeline: SpyPipeline
@@ -308,16 +309,5 @@ export default class PipelineTest extends AbstractSpruceTest {
 
 	private static get stateUrl() {
 		return `${this.executionIdUrl}/state`
-	}
-}
-
-class SpyPipeline extends PipelineImpl {
-	public constructor(...args: any[]) {
-		//@ts-ignore
-		super(...args)
-	}
-
-	public getExecutionUrl() {
-		return this.executionIdUrl
 	}
 }

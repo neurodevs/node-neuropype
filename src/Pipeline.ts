@@ -2,10 +2,17 @@ import { assertOptions } from '@sprucelabs/schema'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
+import {
+	Pipeline,
+	PipelineConstructor,
+	PipelineConstructorOptions,
+	PipelineOptions,
+	PipelineNode,
+} from './nodeNeuropype.types'
 
 export default class PipelineImpl implements Pipeline {
 	public static axios: Axios = axios
-	public static Class: new (options: PipelineConstructorOptions) => Pipeline
+	public static Class?: PipelineConstructor
 
 	private baseUrl: string
 	private path: string
@@ -14,21 +21,27 @@ export default class PipelineImpl implements Pipeline {
 
 	public static async Pipeline(options: PipelineOptions) {
 		const { path } = assertOptions(options, ['path'])
-		const baseUrl = process.env.NEUROPYPE_BASE_URL
+		const baseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
 
-		if (!baseUrl) {
-			throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
-		}
-
-		if (!path.endsWith('.pyp')) {
-			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
-		}
+		this.validateBaseUrl(baseUrl)
+		this.validateFileExtension(path)
 
 		const pipeline = new (this.Class ?? this)({ baseUrl, path })
-
 		await pipeline.load()
 
 		return pipeline
+	}
+
+	private static validateBaseUrl(baseUrl: string) {
+		if (!baseUrl) {
+			throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+		}
+	}
+
+	private static validateFileExtension(path: string) {
+		if (!path.endsWith('.pyp')) {
+			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
+		}
 	}
 
 	protected constructor(options: PipelineConstructorOptions) {
@@ -37,18 +50,18 @@ export default class PipelineImpl implements Pipeline {
 		this.path = path
 	}
 
-	private async createExecution() {
-		const { data } = await this.post(this.baseUrl + '/executions', {})
-		const { id } = data
-		this.executionId = id
-	}
-
 	public async load() {
 		await this.createExecution()
-		await this.post(`${this.executionIdUrl}/actions/load`, {
+		await this.post(this.loadUrl, {
 			file: this.path,
 			what: 'graph',
 		})
+	}
+
+	private async createExecution() {
+		const { data } = await this.post(this.executionsUrl, {})
+		const { id } = data
+		this.executionId = id
 	}
 
 	public async start() {
@@ -64,18 +77,22 @@ export default class PipelineImpl implements Pipeline {
 		})
 	}
 
-	public async reload(): Promise<void> {
-		await this.axios.post(this.executionIdUrl + '/actions/reload')
+	public async reload() {
+		await this.axios.post(this.reloadUrl)
 	}
 
 	public async reset() {
-		await this.axios.delete(this.executionIdUrl)
+		await this.deleteExecution()
 		await this.createExecution()
 	}
 
+	private async deleteExecution() {
+		await this.axios.delete(this.executionIdUrl)
+	}
+
 	public async update(parameters: Record<string, any>) {
-		const { data } = await this.axios.get(this.executionIdUrl + '/graph/nodes')
-		const nodes = data as NeuropypeNode[]
+		const { data } = await this.axios.get(this.nodesUrl)
+		const nodes = data as PipelineNode[]
 
 		for (const node of nodes) {
 			if (node.type === 'ParameterPort') {
@@ -97,24 +114,51 @@ export default class PipelineImpl implements Pipeline {
 		}
 	}
 
-	private generateUpdateParametersUrl(id: string): string {
-		return (
-			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/default/value'
-		)
-	}
-
-	private generatePortnameValueUrl(id: string): string {
-		return (
-			this.executionIdUrl + '/graph/nodes/' + id + '/parameters/portname/value'
-		)
+	private get executionsUrl() {
+		// Example: http://localhost:6937/executions
+		return `${this.baseUrl}/executions`
 	}
 
 	protected get executionIdUrl() {
-		return `${this.baseUrl}/executions/${this.executionId}`
+		// Example: http://localhost:6937/executions/1234
+		return `${this.executionsUrl}/${this.executionId}`
 	}
 
-	protected get stateUrl(): string {
-		return this.executionIdUrl + '/state'
+	private get loadUrl() {
+		// Example: http://localhost:6937/executions/1234/actions/load
+		return `${this.executionIdUrl}/actions/load`
+	}
+
+	private get reloadUrl() {
+		// Example: http://localhost:6937/executions/1234/actions/reload
+		return `${this.executionIdUrl}/actions/reload`
+	}
+
+	private get stateUrl() {
+		// Example: http://localhost:6937/executions/1234/state
+		return `${this.executionIdUrl}/state`
+	}
+
+	private get nodesUrl() {
+		// Example: http://localhost:6937/executions/1234/graph/nodes
+		return `${this.executionIdUrl}/graph/nodes`
+	}
+
+	private generateNodeUrl(nodeId: string) {
+		// Example: http://localhost:6937/executions/1234/graph/nodes/5678
+		return `${this.nodesUrl}/${nodeId}`
+	}
+
+	private generateUpdateParametersUrl(nodeId: string) {
+		// Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/default/value
+		const nodeUrl = this.generateNodeUrl(nodeId)
+		return `${nodeUrl}/parameters/default/value`
+	}
+
+	private generatePortnameValueUrl(nodeId: string) {
+		// Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/portname/value
+		const nodeUrl = this.generateNodeUrl(nodeId)
+		return `${nodeUrl}/parameters/portname/value`
 	}
 
 	private async post(url: string, args?: Record<string, any>) {
@@ -138,27 +182,4 @@ export default class PipelineImpl implements Pipeline {
 	private get axios() {
 		return PipelineImpl.axios
 	}
-}
-
-interface PipelineOptions {
-	path: string
-}
-
-export interface PipelineConstructorOptions {
-	baseUrl: string
-	path: string
-}
-
-export interface Pipeline {
-	load(): unknown
-	start(): Promise<void>
-	stop(): Promise<void>
-	reset(): Promise<void>
-	reload(): Promise<void>
-	update(parameters: Record<string, any>): Promise<void>
-}
-
-interface NeuropypeNode {
-	id: string
-	type: string
 }

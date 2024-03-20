@@ -5,8 +5,8 @@ import AbstractSpruceTest, {
 	generateId,
 } from '@sprucelabs/test-utils'
 import Executions from '../../Executions'
-import AxiosStub from '../AxiosStub'
-import { generateFakedAxiosResponse } from './generateFakedAxiosResponse'
+import AxiosStub from '../../testDoubles/AxiosStub'
+import { generateFakedAxiosResponse } from '../../testDoubles/generateFakedAxiosResponse'
 
 export default class ExecutionsTest extends AbstractSpruceTest {
 	private static axiosStub: AxiosStub
