@@ -10,7 +10,7 @@ export default class FakePipeline implements Pipeline {
 	public stopHitCount = 0
 	public updateCalls: Record<string, any>[] = []
 
-	public constructor(options: PipelineConstructorOptions) {
+	public constructor(options?: PipelineConstructorOptions) {
 		this.constructorOptions = options
 	}
 
