@@ -26,11 +26,7 @@
 			"#spruce/*": [
 				".spruce/*"
 			]
-		},
-		"types": [
-			"node",
-			"jest"
-		],
+		}
 	},
 	"include": [
 		"./src/*.ts",
