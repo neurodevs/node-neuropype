@@ -165,7 +165,7 @@ export default class PipelineImpl implements Pipeline {
 		try {
 			return await this.axios.post(url, args)
 		} catch (err) {
-			this.log.error('Failed to load pipeline', this.path)
+			this.log.error(`Failed POST to pipeline (${this.path}) at ${url}!`)
 			throw err
 		}
 	}
@@ -174,7 +174,7 @@ export default class PipelineImpl implements Pipeline {
 		try {
 			return await this.axios.patch(url, args)
 		} catch (err) {
-			this.log.error('Failed to patch pipeline', this.path)
+			this.log.error(`Failed PATCH to pipeline (${this.path}) at ${url}!`)
 			throw err
 		}
 	}
