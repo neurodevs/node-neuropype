@@ -99,7 +99,9 @@ export default class PipelineImpl implements Pipeline {
 		const { data } = await this.axios.get(this.nodesUrl)
 		const nodes = data as PipelineNode[]
 
-		this.log.info(`Updating pipeline: ${this.path}, parameters: ${parameters}`)
+		this.log.info(
+			`Updating pipeline: ${this.path}, parameters: ${JSON.stringify(parameters)}`
+		)
 
 		for (const node of nodes) {
 			if (node.type === 'ParameterPort') {
@@ -173,7 +175,7 @@ export default class PipelineImpl implements Pipeline {
 			return await this.axios.post(url, args)
 		} catch (err) {
 			this.log.error(
-				`Failed POST to pipeline: ${this.path}, url: ${url}, args: ${args}!`
+				`Failed POST to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
 			)
 			throw err
 		}
@@ -184,7 +186,7 @@ export default class PipelineImpl implements Pipeline {
 			return await this.axios.patch(url, args)
 		} catch (err) {
 			this.log.error(
-				`Failed PATCH to pipeline: ${this.path}, url: ${url}, args: ${args}!`
+				`Failed PATCH to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
 			)
 			throw err
 		}
