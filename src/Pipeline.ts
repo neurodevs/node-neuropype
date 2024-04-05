@@ -51,6 +51,7 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	public async load() {
+		this.log.info(`Loading pipeline: ${this.path}`)
 		await this.createExecution()
 		await this.post(this.loadUrl, {
 			file: this.path,
@@ -65,6 +66,7 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	public async start() {
+		this.log.info(`Starting pipeline: ${this.path}`)
 		await this.patch(this.stateUrl, {
 			running: true,
 			paused: false,
@@ -72,16 +74,19 @@ export default class PipelineImpl implements Pipeline {
 	}
 
 	public async stop() {
+		this.log.info(`Stopping pipeline: ${this.path}`)
 		await this.patch(this.stateUrl, {
 			running: false,
 		})
 	}
 
 	public async reload() {
+		this.log.info(`Reloading pipeline: ${this.path}`)
 		await this.axios.post(this.reloadUrl)
 	}
 
 	public async reset() {
+		this.log.info(`Resetting pipeline: ${this.path}`)
 		await this.deleteExecution()
 		await this.createExecution()
 	}
@@ -93,6 +98,8 @@ export default class PipelineImpl implements Pipeline {
 	public async update(parameters: Record<string, any>) {
 		const { data } = await this.axios.get(this.nodesUrl)
 		const nodes = data as PipelineNode[]
+
+		this.log.info(`Updating pipeline: ${this.path}, parameters: ${parameters}`)
 
 		for (const node of nodes) {
 			if (node.type === 'ParameterPort') {
@@ -165,7 +172,9 @@ export default class PipelineImpl implements Pipeline {
 		try {
 			return await this.axios.post(url, args)
 		} catch (err) {
-			this.log.error(`Failed POST to pipeline (${this.path}) at ${url}!`)
+			this.log.error(
+				`Failed POST to pipeline: ${this.path}, url: ${url}, args: ${args}!`
+			)
 			throw err
 		}
 	}
@@ -174,7 +183,9 @@ export default class PipelineImpl implements Pipeline {
 		try {
 			return await this.axios.patch(url, args)
 		} catch (err) {
-			this.log.error(`Failed PATCH to pipeline (${this.path}) at ${url}!`)
+			this.log.error(
+				`Failed PATCH to pipeline: ${this.path}, url: ${url}, args: ${args}!`
+			)
 			throw err
 		}
 	}
