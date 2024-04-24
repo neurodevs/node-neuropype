@@ -3,196 +3,196 @@ import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
 import {
-	Pipeline,
-	PipelineConstructor,
-	PipelineConstructorOptions,
-	PipelineOptions,
-	PipelineNode,
+    Pipeline,
+    PipelineConstructor,
+    PipelineConstructorOptions,
+    PipelineOptions,
+    PipelineNode,
 } from './nodeNeuropype.types'
 
 export default class PipelineImpl implements Pipeline {
-	public static axios: Axios = axios
-	public static Class?: PipelineConstructor
+    public static axios: Axios = axios
+    public static Class?: PipelineConstructor
 
-	private baseUrl: string
-	private path: string
-	private executionId?: string
-	private log = buildLog('PipelineImpl')
+    private baseUrl: string
+    private path: string
+    private executionId?: string
+    private log = buildLog('PipelineImpl')
 
-	public static async Pipeline(options: PipelineOptions) {
-		const { path } = assertOptions(options, ['path'])
-		const baseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
+    public static async Pipeline(options: PipelineOptions) {
+        const { path } = assertOptions(options, ['path'])
+        const baseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
 
-		this.validateBaseUrl(baseUrl)
-		this.validateFileExtension(path)
+        this.validateBaseUrl(baseUrl)
+        this.validateFileExtension(path)
 
-		const pipeline = new (this.Class ?? this)({ baseUrl, path })
-		await pipeline.load()
+        const pipeline = new (this.Class ?? this)({ baseUrl, path })
+        await pipeline.load()
 
-		return pipeline
-	}
+        return pipeline
+    }
 
-	private static validateBaseUrl(baseUrl: string) {
-		if (!baseUrl) {
-			throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
-		}
-	}
+    private static validateBaseUrl(baseUrl: string) {
+        if (!baseUrl) {
+            throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+        }
+    }
 
-	private static validateFileExtension(path: string) {
-		if (!path.endsWith('.pyp')) {
-			throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
-		}
-	}
+    private static validateFileExtension(path: string) {
+        if (!path.endsWith('.pyp')) {
+            throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
+        }
+    }
 
-	protected constructor(options: PipelineConstructorOptions) {
-		const { baseUrl, path } = options
-		this.baseUrl = baseUrl
-		this.path = path
-	}
+    protected constructor(options: PipelineConstructorOptions) {
+        const { baseUrl, path } = options
+        this.baseUrl = baseUrl
+        this.path = path
+    }
 
-	public async load() {
-		this.log.info(`Loading pipeline: ${this.path}`)
-		await this.createExecution()
-		await this.post(this.loadUrl, {
-			file: this.path,
-			what: 'graph',
-		})
-	}
+    public async load() {
+        this.log.info(`Loading pipeline: ${this.path}`)
+        await this.createExecution()
+        await this.post(this.loadUrl, {
+            file: this.path,
+            what: 'graph',
+        })
+    }
 
-	private async createExecution() {
-		const { data } = await this.post(this.executionsUrl, {})
-		const { id } = data
-		this.executionId = id
-	}
+    private async createExecution() {
+        const { data } = await this.post(this.executionsUrl, {})
+        const { id } = data
+        this.executionId = id
+    }
 
-	public async start() {
-		this.log.info(`Starting pipeline: ${this.path}`)
-		await this.patch(this.stateUrl, {
-			running: true,
-			paused: false,
-		})
-	}
+    public async start() {
+        this.log.info(`Starting pipeline: ${this.path}`)
+        await this.patch(this.stateUrl, {
+            running: true,
+            paused: false,
+        })
+    }
 
-	public async stop() {
-		this.log.info(`Stopping pipeline: ${this.path}`)
-		await this.patch(this.stateUrl, {
-			running: false,
-		})
-	}
+    public async stop() {
+        this.log.info(`Stopping pipeline: ${this.path}`)
+        await this.patch(this.stateUrl, {
+            running: false,
+        })
+    }
 
-	public async reload() {
-		this.log.info(`Reloading pipeline: ${this.path}`)
-		await this.axios.post(this.reloadUrl)
-	}
+    public async reload() {
+        this.log.info(`Reloading pipeline: ${this.path}`)
+        await this.axios.post(this.reloadUrl)
+    }
 
-	public async reset() {
-		this.log.info(`Resetting pipeline: ${this.path}`)
-		await this.deleteExecution()
-		await this.createExecution()
-	}
+    public async reset() {
+        this.log.info(`Resetting pipeline: ${this.path}`)
+        await this.deleteExecution()
+        await this.createExecution()
+    }
 
-	private async deleteExecution() {
-		await this.axios.delete(this.executionIdUrl)
-	}
+    private async deleteExecution() {
+        await this.axios.delete(this.executionIdUrl)
+    }
 
-	public async update(parameters: Record<string, any>) {
-		const { data } = await this.axios.get(this.nodesUrl)
-		const nodes = data as PipelineNode[]
+    public async update(parameters: Record<string, any>) {
+        const { data } = await this.axios.get(this.nodesUrl)
+        const nodes = data as PipelineNode[]
 
-		this.log.info(
-			`Updating pipeline: ${this.path}, parameters: ${JSON.stringify(parameters)}`
-		)
+        this.log.info(
+            `Updating pipeline: ${this.path}, parameters: ${JSON.stringify(parameters)}`
+        )
 
-		for (const node of nodes) {
-			if (node.type === 'ParameterPort') {
-				const { data: portName } = await this.axios.get(
-					this.generatePortnameValueUrl(node.id)
-				)
-				if (parameters?.[portName]) {
-					await this.axios.put(
-						this.generateUpdateParametersUrl(node.id),
-						parameters[portName],
-						{
-							headers: {
-								'Content-Type': 'application/json',
-							},
-						}
-					)
-				}
-			}
-		}
-	}
+        for (const node of nodes) {
+            if (node.type === 'ParameterPort') {
+                const { data: portName } = await this.axios.get(
+                    this.generatePortnameValueUrl(node.id)
+                )
+                if (parameters?.[portName]) {
+                    await this.axios.put(
+                        this.generateUpdateParametersUrl(node.id),
+                        parameters[portName],
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    )
+                }
+            }
+        }
+    }
 
-	private get executionsUrl() {
-		// Example: http://localhost:6937/executions
-		return `${this.baseUrl}/executions`
-	}
+    private get executionsUrl() {
+        // Example: http://localhost:6937/executions
+        return `${this.baseUrl}/executions`
+    }
 
-	protected get executionIdUrl() {
-		// Example: http://localhost:6937/executions/1234
-		return `${this.executionsUrl}/${this.executionId}`
-	}
+    protected get executionIdUrl() {
+        // Example: http://localhost:6937/executions/1234
+        return `${this.executionsUrl}/${this.executionId}`
+    }
 
-	private get loadUrl() {
-		// Example: http://localhost:6937/executions/1234/actions/load
-		return `${this.executionIdUrl}/actions/load`
-	}
+    private get loadUrl() {
+        // Example: http://localhost:6937/executions/1234/actions/load
+        return `${this.executionIdUrl}/actions/load`
+    }
 
-	private get reloadUrl() {
-		// Example: http://localhost:6937/executions/1234/actions/reload
-		return `${this.executionIdUrl}/actions/reload`
-	}
+    private get reloadUrl() {
+        // Example: http://localhost:6937/executions/1234/actions/reload
+        return `${this.executionIdUrl}/actions/reload`
+    }
 
-	private get stateUrl() {
-		// Example: http://localhost:6937/executions/1234/state
-		return `${this.executionIdUrl}/state`
-	}
+    private get stateUrl() {
+        // Example: http://localhost:6937/executions/1234/state
+        return `${this.executionIdUrl}/state`
+    }
 
-	private get nodesUrl() {
-		// Example: http://localhost:6937/executions/1234/graph/nodes
-		return `${this.executionIdUrl}/graph/nodes`
-	}
+    private get nodesUrl() {
+        // Example: http://localhost:6937/executions/1234/graph/nodes
+        return `${this.executionIdUrl}/graph/nodes`
+    }
 
-	private generateNodeUrl(nodeId: string) {
-		// Example: http://localhost:6937/executions/1234/graph/nodes/5678
-		return `${this.nodesUrl}/${nodeId}`
-	}
+    private generateNodeUrl(nodeId: string) {
+        // Example: http://localhost:6937/executions/1234/graph/nodes/5678
+        return `${this.nodesUrl}/${nodeId}`
+    }
 
-	private generateUpdateParametersUrl(nodeId: string) {
-		// Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/default/value
-		const nodeUrl = this.generateNodeUrl(nodeId)
-		return `${nodeUrl}/parameters/default/value`
-	}
+    private generateUpdateParametersUrl(nodeId: string) {
+        // Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/default/value
+        const nodeUrl = this.generateNodeUrl(nodeId)
+        return `${nodeUrl}/parameters/default/value`
+    }
 
-	private generatePortnameValueUrl(nodeId: string) {
-		// Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/portname/value
-		const nodeUrl = this.generateNodeUrl(nodeId)
-		return `${nodeUrl}/parameters/portname/value`
-	}
+    private generatePortnameValueUrl(nodeId: string) {
+        // Example: http://localhost:6937/executions/1234/graph/nodes/5678/parameters/portname/value
+        const nodeUrl = this.generateNodeUrl(nodeId)
+        return `${nodeUrl}/parameters/portname/value`
+    }
 
-	private async post(url: string, args?: Record<string, any>) {
-		try {
-			return await this.axios.post(url, args)
-		} catch (err) {
-			this.log.error(
-				`Failed POST to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
-			)
-			throw err
-		}
-	}
+    private async post(url: string, args?: Record<string, any>) {
+        try {
+            return await this.axios.post(url, args)
+        } catch (err) {
+            this.log.error(
+                `Failed POST to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
+            )
+            throw err
+        }
+    }
 
-	private async patch(url: string, args?: Record<string, any>) {
-		try {
-			return await this.axios.patch(url, args)
-		} catch (err) {
-			this.log.error(
-				`Failed PATCH to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
-			)
-			throw err
-		}
-	}
+    private async patch(url: string, args?: Record<string, any>) {
+        try {
+            return await this.axios.patch(url, args)
+        } catch (err) {
+            this.log.error(
+                `Failed PATCH to pipeline: ${this.path}, url: ${url}, args: ${JSON.stringify(args)}!`
+            )
+            throw err
+        }
+    }
 
-	private get axios() {
-		return PipelineImpl.axios
-	}
+    private get axios() {
+        return PipelineImpl.axios
+    }
 }

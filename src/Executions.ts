@@ -2,30 +2,30 @@ import axios, { Axios } from 'axios'
 import SpruceError from './errors/SpruceError'
 
 export default class Executions {
-	public static axios: Axios = axios
+    public static axios: Axios = axios
 
-	public static async deleteAll() {
-		this.validateBaseUrl()
+    public static async deleteAll() {
+        this.validateBaseUrl()
 
-		const { data } = await this.axios.get(`${this.baseUrl}/executions`)
-		const promises: Promise<any>[] = []
+        const { data } = await this.axios.get(`${this.baseUrl}/executions`)
+        const promises: Promise<any>[] = []
 
-		for (const execution of data ?? []) {
-			promises.push(
-				this.axios.delete(`${this.baseUrl}/executions/${execution.id}`)
-			)
-		}
+        for (const execution of data ?? []) {
+            promises.push(
+                this.axios.delete(`${this.baseUrl}/executions/${execution.id}`)
+            )
+        }
 
-		await Promise.all(promises)
-	}
+        await Promise.all(promises)
+    }
 
-	private static validateBaseUrl() {
-		if (!this.baseUrl) {
-			throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
-		}
-	}
+    private static validateBaseUrl() {
+        if (!this.baseUrl) {
+            throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+        }
+    }
 
-	private static get baseUrl() {
-		return process.env.NEUROPYPE_BASE_URL
-	}
+    private static get baseUrl() {
+        return process.env.NEUROPYPE_BASE_URL
+    }
 }

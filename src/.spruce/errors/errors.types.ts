@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-/* eslint-disable no-redeclare */
-
 import { default as SchemaEntity } from '@sprucelabs/schema'
 import * as SpruceSchema from '@sprucelabs/schema'
+
+
 
 
 
@@ -36,7 +35,6 @@ export declare namespace SpruceErrors.NodeNeuropype {
 }
 
 
-
 export declare namespace SpruceErrors.NodeNeuropype {
 
 	
@@ -55,7 +53,6 @@ export declare namespace SpruceErrors.NodeNeuropype {
 	export type MissingNeuropypeBaseUrlEnvEntity = SchemaEntity<SpruceErrors.NodeNeuropype.MissingNeuropypeBaseUrlEnvSchema>
 
 }
-
 
 
 export declare namespace SpruceErrors.NodeNeuropype {
