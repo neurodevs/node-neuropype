@@ -39,7 +39,7 @@ export default class FakePipeline implements Pipeline {
         this.updateCalls.push(parameters)
     }
 
-    public async clearFake() {
+    public clearFake() {
         this.loadHitCount = 0
         this.startHitCount = 0
         this.stopHitCount = 0
