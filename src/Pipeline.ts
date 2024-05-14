@@ -53,16 +53,20 @@ export default class PipelineImpl implements Pipeline {
     public async load() {
         this.log.info(`Loading pipeline: ${this.path}`)
         await this.createExecution()
-        await this.post(this.loadUrl, {
-            file: this.path,
-            what: 'graph',
-        })
+        await this.loadPipeline()
     }
 
     private async createExecution() {
         const { data } = await this.post(this.executionsUrl, {})
         const { id } = data
         this.executionId = id
+    }
+
+    private async loadPipeline() {
+        await this.post(this.loadUrl, {
+            file: this.path,
+            what: 'graph',
+        })
     }
 
     public async start() {
