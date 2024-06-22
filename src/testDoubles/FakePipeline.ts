@@ -8,6 +8,7 @@ export default class FakePipeline implements Pipeline {
     public reloadHitCount = 0
     public updateHitCount = 0
     public stopHitCount = 0
+    public deleteHitCount = 0
     public updateCalls: Record<string, any>[] = []
 
     public constructor(options?: PipelineConstructorOptions) {
@@ -50,5 +51,7 @@ export default class FakePipeline implements Pipeline {
         this.updateCalls = []
     }
 
-    public async delete(): Promise<void> {}
+    public async delete(): Promise<void> {
+        this.deleteHitCount++
+    }
 }
