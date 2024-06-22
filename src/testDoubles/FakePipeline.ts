@@ -14,7 +14,6 @@ export default class FakePipeline implements Pipeline {
     public constructor(options?: PipelineConstructorOptions) {
         this.constructorOptions = options
     }
-    
 
     public async load() {
         this.loadHitCount++

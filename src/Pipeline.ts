@@ -49,7 +49,7 @@ export default class PipelineImpl implements Pipeline {
         this.baseUrl = baseUrl
         this.path = path
     }
-	
+
     public async load() {
         this.log.info(`Loading pipeline: ${this.path}`)
         await this.createExecution()
@@ -84,10 +84,10 @@ export default class PipelineImpl implements Pipeline {
         })
     }
 
-	public async delete() {
-		this.log.info(`Deleting pipeline: ${this.path}`)
-		await this.axios.delete(this.executionIdUrl)
-	}
+    public async delete() {
+        this.log.info(`Deleting pipeline: ${this.path}`)
+        await this.axios.delete(this.executionIdUrl)
+    }
 
     public async reload() {
         this.log.info(`Reloading pipeline: ${this.path}`)

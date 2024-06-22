@@ -249,9 +249,11 @@ export default class PipelineTest extends AbstractSpruceTest {
 
     @test()
     protected static async canDeletePipelineThatDeletesExecution() {
-        await this.pipeline.delete();
-        assert.isEqual(this.axiosStub.lastDeleteParams?.url, this.executionIdUrl)
-
+        await this.pipeline.delete()
+        assert.isEqual(
+            this.axiosStub.lastDeleteParams?.url,
+            this.executionIdUrl
+        )
     }
 
     private static fakeResponseForPortnameValue(id: string, updateKey: string) {
