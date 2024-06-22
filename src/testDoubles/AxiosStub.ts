@@ -9,6 +9,7 @@ import {
 } from 'axios'
 
 export default class AxiosStub implements Axios {
+   
     public lastPatchUrl?: string
     public lastPutUrl?: string
     public getHistory: string[] = []

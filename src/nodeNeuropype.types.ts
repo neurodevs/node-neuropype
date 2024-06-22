@@ -4,6 +4,7 @@ export interface Pipeline {
     stop(): Promise<void>
     reset(): Promise<void>
     reload(): Promise<void>
+    delete(): Promise<void>
     update(parameters: Record<string, any>): Promise<void>
 }
 

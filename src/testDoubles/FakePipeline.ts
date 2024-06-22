@@ -13,6 +13,7 @@ export default class FakePipeline implements Pipeline {
     public constructor(options?: PipelineConstructorOptions) {
         this.constructorOptions = options
     }
+    
 
     public async load() {
         this.loadHitCount++
@@ -48,4 +49,6 @@ export default class FakePipeline implements Pipeline {
         this.updateHitCount = 0
         this.updateCalls = []
     }
+
+    public async delete(): Promise<void> {}
 }
