@@ -8,7 +8,7 @@ export default class Executions {
     public static async deleteAll() {
         this.validateBaseUrl()
 
-        const { data } = await this.axios.get(`${this.baseUrl}/executions`)
+        const data = await this.getAll()
         const promises: Promise<any>[] = []
 
         for (const execution of data ?? []) {
@@ -16,6 +16,10 @@ export default class Executions {
         }
 
         await Promise.all(promises)
+    }
+
+    public static async getAll(): Promise<{ id: string }[]> {
+        return (await this.axios.get(`${this.baseUrl}/executions`)).data
     }
 
     public static deleteExecution(id: string): Promise<any> {
