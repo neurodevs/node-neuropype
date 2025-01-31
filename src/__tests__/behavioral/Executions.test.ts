@@ -101,6 +101,23 @@ export default class ExecutionsTest extends AbstractSpruceTest {
         assert.isEqualDeep(actual, details)
     }
 
+    @test()
+    protected static async exposesStaticGetAllMethod() {
+        const data = [
+            {
+                id: '0000',
+            },
+            {
+                id: '0001',
+            },
+        ]
+        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(data)
+
+        const actual = await Executions.getAll()
+
+        assert.isEqualDeep(actual, data)
+    }
+
     private static assertDeletAtIndexUsedId(idx: number, id: string) {
         assert.isEqualDeep(this.axiosStub.deleteParamsHistory[idx], {
             url: `${process.env.NEUROPYPE_BASE_URL}/executions/${id}`,
