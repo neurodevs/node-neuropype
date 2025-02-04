@@ -1,4 +1,5 @@
-import axios, { Axios, AxiosResponse } from 'axios'
+import axios, { Axios } from 'axios'
+import json5 from 'json5'
 import SpruceError from './errors/SpruceError'
 import { ExecutionDetails } from './nodeNeuropype.types'
 
@@ -33,11 +34,7 @@ export default class Executions {
         const res = await this.axios.get(`${this.baseUrl}/executions/${id}`, {
             responseType: 'text',
         })
-        return this.json5Parse(res)
-    }
-
-    private static json5Parse(res: AxiosResponse<any, any>): ExecutionDetails {
-        return JSON.parse(res.data.replaceAll('Infinity', '"Infinity"'))
+        return json5.parse(res.data)
     }
 
     private static validateBaseUrl() {

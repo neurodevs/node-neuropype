@@ -90,7 +90,7 @@ export default class ExecutionsTest extends AbstractSpruceTest {
     protected static async canGetInfoOnASingleExecutionWithInvalidJson() {
         const details = this.validJsonWithInfinity()
         this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(
-            JSON.stringify(details).replaceAll('"Infinity"', 'Infinity')
+            JSON.stringify(details)
         )
         const actual = await Executions.getDetails('0000')
 
