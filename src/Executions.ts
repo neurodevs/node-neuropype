@@ -37,6 +37,14 @@ export default class Executions {
         return json5.parse(res.data)
     }
 
+    public static async getDescription(id: string) {
+        const res = await this.axios.get(
+            `${this.baseUrl}/executions/${id}/graph/description`
+        )
+
+        return res.data
+    }
+
     private static validateBaseUrl() {
         if (!this.baseUrl) {
             throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
