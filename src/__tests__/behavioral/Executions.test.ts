@@ -77,11 +77,11 @@ export default class ExecutionsTest extends AbstractSpruceTest {
         this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(
             JSON.stringify(data)
         )
-        const actual = await Executions.getDetails('0000')
+        const actual = await Executions.getDetails('1234')
 
         assert.isEqual(
             this.axiosStub.lastGetUrl,
-            `${process.env.NEUROPYPE_BASE_URL}/executions/0000`
+            `${process.env.NEUROPYPE_BASE_URL}/executions/1234`
         )
         assert.isEqualDeep(actual, data)
     }
