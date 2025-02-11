@@ -1,7 +1,7 @@
 import axios, { Axios } from 'axios'
 import json5 from 'json5'
 import SpruceError from './errors/SpruceError'
-import { ExecutionDetails } from './nodeNeuropype.types'
+import { Description, ExecutionDetails } from './nodeNeuropype.types'
 
 export default class Executions {
     public static axios: Axios = axios
@@ -42,7 +42,7 @@ export default class Executions {
             `${this.baseUrl}/executions/${id}/graph/description`
         )
 
-        return res.data
+        return res.data as Promise<Description>
     }
 
     private static validateBaseUrl() {
