@@ -42,7 +42,7 @@ export default class Executions {
             `${this.baseUrl}/executions/${id}/graph/description`
         )
 
-        return res.data as Promise<Description>
+        return res.data as Description
     }
 
     private static validateBaseUrl() {
