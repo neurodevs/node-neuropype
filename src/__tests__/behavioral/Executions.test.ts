@@ -31,17 +31,13 @@ export default class ExecutionsTest extends AbstractSpruceTest {
     @test()
     protected static async listsAllExecutionsFirst() {
         await this.deleteAll()
-
-        assert.isEqual(
-            this.axiosStub.lastGetUrl,
-            `${process.env.NEUROPYPE_BASE_URL}/executions`
-        )
+        this.assertLastAxiosGetUrlEquals('/executions')
     }
 
     @test('can delete one execution 1', '0000')
     @test('can delete one execution 2', '0001')
     protected static async callsDeleteForOnlyExecutionReturned(id: string) {
-        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse([
+        this.dropInAxiosFakedGetResponse([
             {
                 id,
             },
@@ -54,7 +50,7 @@ export default class ExecutionsTest extends AbstractSpruceTest {
 
     @test()
     protected static async callsDeleteOnMultipleExecutions() {
-        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse([
+        this.dropInAxiosFakedGetResponse([
             {
                 id: '0000',
             },
@@ -74,31 +70,38 @@ export default class ExecutionsTest extends AbstractSpruceTest {
         const data = {
             state: { running: false },
         }
-        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(
-            JSON.stringify(data)
-        )
+        this.dropInAxiosFakedGetResponse(JSON.stringify(data))
         const actual = await Executions.getDetails('1234')
 
-        assert.isEqual(
-            this.axiosStub.lastGetUrl,
-            `${process.env.NEUROPYPE_BASE_URL}/executions/1234`
-        )
+        this.assertLastAxiosGetUrlEquals('/executions/1234')
         assert.isEqualDeep(actual, data)
     }
 
     @test()
     protected static async canGetInfoOnASingleExecutionWithInvalidJson() {
-        const details = this.validJsonWithInfinity()
-        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(
-            JSON.stringify(details)
-        )
+        const details = this.generateExecutionDetailsValuesWithInfinity()
+        this.dropInAxiosFakedGetResponse(JSON.stringify(details))
         const actual = await Executions.getDetails('0000')
-
-        assert.isEqual(
-            this.axiosStub.lastGetUrl,
-            `${process.env.NEUROPYPE_BASE_URL}/executions/0000`
-        )
+        this.assertLastAxiosGetUrlEquals(`/executions/0000`)
         assert.isEqualDeep(actual, details)
+    }
+
+    @test('can get description from execution 1', '0000')
+    @test('can get description from execution 2', '0001')
+    protected static async canGetDescriptionsFromExecutions(id: string) {
+        this.dropInAxiosFakedGetResponse({})
+        await Executions.getDescription(id)
+        this.assertLastAxiosGetUrlEquals(`/executions/${id}/graph/description`)
+    }
+
+    @test()
+    protected static async getDescriptionReturnsResponse() {
+        const data = {
+            description: generateId(),
+        }
+        this.dropInAxiosFakedGetResponse(data)
+        const actual = await Executions.getDescription('0000')
+        assert.isEqualDeep(actual, data)
     }
 
     @test()
@@ -111,7 +114,8 @@ export default class ExecutionsTest extends AbstractSpruceTest {
                 id: '0001',
             },
         ]
-        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(data)
+
+        this.dropInAxiosFakedGetResponse(data)
 
         const actual = await Executions.getAll()
 
@@ -124,11 +128,22 @@ export default class ExecutionsTest extends AbstractSpruceTest {
         })
     }
 
+    private static assertLastAxiosGetUrlEquals(path: string) {
+        assert.isEqual(
+            this.axiosStub.lastGetUrl,
+            `${process.env.NEUROPYPE_BASE_URL}${path}`
+        )
+    }
+
     private static async deleteAll() {
         await Executions.deleteAll()
     }
 
-    private static validJsonWithInfinity(): ExecutionDetails {
+    private static dropInAxiosFakedGetResponse(data: any) {
+        this.axiosStub.fakedGetResponse = generateFakedAxiosResponse(data)
+    }
+
+    private static generateExecutionDetailsValuesWithInfinity(): ExecutionDetails {
         return {
             state: {
                 running: false,
