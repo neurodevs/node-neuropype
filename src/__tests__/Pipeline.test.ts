@@ -12,6 +12,7 @@ import SpyPipeline from '../testDoubles/SpyPipeline'
 export default class PipelineTest extends AbstractSpruceTest {
     private static pipeline: SpyPipeline
     private static axiosStub: AxiosStub
+    private static fakeResponse: any
     private static executionId: string
     private static emptyPipelinePath: string
     private static expectedLoadParams: any
@@ -25,6 +26,11 @@ export default class PipelineTest extends AbstractSpruceTest {
 
         PipelineImpl.Class = SpyPipeline
         PipelineImpl.axios = this.axiosStub
+
+        // @ts-ignore
+        PipelineImpl.parse = (data: string) => {
+            return data
+        }
 
         delete this.axiosStub.responseToPost
         delete this.axiosStub.lastDeleteParams
@@ -44,6 +50,10 @@ export default class PipelineTest extends AbstractSpruceTest {
                 what: 'graph',
             },
         }
+
+        this.fakeResponse = generateFakedAxiosResponse(generateId())
+        this.axiosStub.fakeGetResponsesByUrl[this.executionIdUrl] =
+            this.fakeResponse
 
         this.pipeline = (await PipelineImpl.Create(
             this.emptyPipelinePath
@@ -279,6 +289,21 @@ export default class PipelineTest extends AbstractSpruceTest {
         await this.pipeline.getDetails()
 
         assert.isEqual(this.axiosStub.lastGetConfig?.responseType, 'text')
+    }
+
+    @test()
+    protected static async callsParseFunctionFromJson5() {
+        let passedData = {}
+
+        // @ts-ignore
+        PipelineImpl.parse = (data: string) => {
+            passedData = data
+            return {}
+        }
+
+        await this.pipeline.getDetails()
+
+        assert.isEqual(passedData, this.fakeResponse.data)
     }
 
     private static fakeResponseForPortnameValue(id: string, updateKey: string) {

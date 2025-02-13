@@ -14,7 +14,7 @@ import {
 export default class PipelineImpl implements Pipeline {
     public static Class?: PipelineConstructor
     public static axios: Axios = axios
-    public static json5 = json5
+    public static parse = json5.parse
 
     private baseUrl: string
     private path: string
@@ -139,9 +139,11 @@ export default class PipelineImpl implements Pipeline {
     }
 
     public async getDetails() {
-        return this.axios
+        const response = await this.axios
             .get(this.executionIdUrl, { responseType: 'text' })
-            .then(({ data }) => data as ExecutionDetails)
+            .then(({ data }) => data)
+
+        return PipelineImpl.parse(response) as ExecutionDetails
     }
 
     private get executionsUrl() {
