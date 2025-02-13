@@ -13,7 +13,7 @@ async function testGetAllExecutions() {
 }
 
 async function testCreatePipeline() {
-    await PipelineImpl.Create(defaultPipelinePath)
+    await createPipeline()
     const executionIds = await Executions.getAll()
 
     if (executionIds.length !== 1) {
@@ -23,7 +23,7 @@ async function testCreatePipeline() {
 
 async function testCreateThenDeleteThenGetAll() {
     for (let i = 0; i < 3; i++) {
-        await PipelineImpl.Create(defaultPipelinePath)
+        await createPipeline()
     }
     await Executions.deleteAll()
     const executions = await Executions.getAll()
@@ -33,6 +33,19 @@ async function testCreateThenDeleteThenGetAll() {
     }
 }
 
+async function testGetDetails() {
+    const pipeline = await createPipeline()
+    const details = await pipeline.getDetails()
+
+    if (!details) {
+        throw new Error('No details found!')
+    }
+}
+
+async function createPipeline() {
+    return await PipelineImpl.Create(defaultPipelinePath)
+}
+
 async function main() {
     process.env.NEUROPYPE_BASE_URL = 'http://192.168.8.11:6937/'
 
@@ -40,6 +53,7 @@ async function main() {
         testCreateThenDeleteThenGetAll,
         testGetAllExecutions,
         testCreatePipeline,
+        testGetDetails,
     ] as const
     for (const test of tests) {
         await Executions.deleteAll()
