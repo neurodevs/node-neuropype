@@ -12,13 +12,9 @@ export type PipelineConstructor = new (
     options: PipelineConstructorOptions
 ) => Pipeline
 
-export interface PipelineOptions {
-    path: string
-}
-
 export interface PipelineConstructorOptions {
-    baseUrl: string
-    path: string
+    neuropypeBaseUrl: string
+    pypFilepath: string
 }
 
 export interface PipelineNode {

@@ -13,7 +13,7 @@ async function testGetAllExecutions() {
 }
 
 async function testCreatePipeline() {
-    await PipelineImpl.Pipeline({ path: defaultPipelinePath })
+    await PipelineImpl.Pipeline(defaultPipelinePath)
     const executionIds = await Executions.getAll()
 
     if (executionIds.length !== 1) {
@@ -23,7 +23,7 @@ async function testCreatePipeline() {
 
 async function testCreateThenDeleteThenGetAll() {
     for (let i = 0; i < 3; i++) {
-        await PipelineImpl.Pipeline({ path: defaultPipelinePath })
+        await PipelineImpl.Pipeline(defaultPipelinePath)
     }
     await Executions.deleteAll()
     const executions = await Executions.getAll()

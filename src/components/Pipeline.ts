@@ -6,7 +6,6 @@ import {
     Pipeline,
     PipelineConstructor,
     PipelineConstructorOptions,
-    PipelineOptions,
     PipelineNode,
 } from '../nodeNeuropype.types'
 
@@ -19,14 +18,18 @@ export default class PipelineImpl implements Pipeline {
     private executionId?: string
     private log = buildLog('PipelineImpl')
 
-    public static async Pipeline(options: PipelineOptions) {
-        const { path } = assertOptions(options, ['path'])
-        const baseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
+    public static async Pipeline(pypFilepath: string) {
+        assertOptions({ pypFilepath }, ['pypFilepath'])
 
-        this.validateBaseUrl(baseUrl)
-        this.validateFileExtension(path)
+        const neuropypeBaseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
 
-        const pipeline = new (this.Class ?? this)({ baseUrl, path })
+        this.validateBaseUrl(neuropypeBaseUrl)
+        this.validateFileExtension(pypFilepath)
+
+        const pipeline = new (this.Class ?? this)({
+            neuropypeBaseUrl,
+            pypFilepath,
+        })
         await pipeline.load()
 
         return pipeline
@@ -45,7 +48,7 @@ export default class PipelineImpl implements Pipeline {
     }
 
     protected constructor(options: PipelineConstructorOptions) {
-        const { baseUrl, path } = options
+        const { neuropypeBaseUrl: baseUrl, pypFilepath: path } = options
         this.baseUrl = baseUrl
         this.path = path
     }
