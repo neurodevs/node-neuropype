@@ -274,6 +274,13 @@ export default class PipelineTest extends AbstractSpruceTest {
         assert.isEqual(this.axiosStub.lastGetUrl, this.executionIdUrl)
     }
 
+    @test()
+    protected static async getDetailsRequestsTextFormatFromAxios() {
+        await this.pipeline.getDetails()
+
+        assert.isEqual(this.axiosStub.lastGetConfig?.responseType, 'text')
+    }
+
     private static fakeResponseForPortnameValue(id: string, updateKey: string) {
         this.axiosStub.fakeGetResponsesByUrl[
             this.generatePortnameValueUrl(id)
