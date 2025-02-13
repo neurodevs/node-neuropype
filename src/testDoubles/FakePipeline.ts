@@ -1,6 +1,12 @@
-import { Pipeline, PipelineConstructorOptions } from '../nodeNeuropype.types'
+import {
+    ExecutionDetails,
+    Pipeline,
+    PipelineConstructorOptions,
+} from '../nodeNeuropype.types'
 
 export default class FakePipeline implements Pipeline {
+    public static details?: ExecutionDetails
+
     public constructorOptions?: PipelineConstructorOptions
     public loadHitCount = 0
     public startHitCount = 0
@@ -38,6 +44,10 @@ export default class FakePipeline implements Pipeline {
     public async update(parameters: Record<string, any>) {
         this.updateHitCount++
         this.updateCalls.push(parameters)
+    }
+
+    public async getDetails() {
+        return FakePipeline.details ?? ({} as ExecutionDetails)
     }
 
     public clearFake() {

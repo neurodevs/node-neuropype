@@ -3,6 +3,7 @@ import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
 import SpruceError from '../errors/SpruceError'
 import {
+    ExecutionDetails,
     Pipeline,
     PipelineConstructor,
     PipelineConstructorOptions,
@@ -133,6 +134,12 @@ export default class PipelineImpl implements Pipeline {
                 }
             }
         }
+    }
+
+    public async getDetails() {
+        return this.axios
+            .get(this.executionIdUrl)
+            .then(({ data }) => data as ExecutionDetails)
     }
 
     private get executionsUrl() {

@@ -6,6 +6,7 @@ export interface Pipeline {
     reload(): Promise<void>
     delete(): Promise<void>
     update(parameters: Record<string, any>): Promise<void>
+    getDetails(): Promise<ExecutionDetails>
 }
 
 export type PipelineConstructor = new (
