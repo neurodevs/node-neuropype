@@ -11,17 +11,14 @@ import SpyPipeline from '../../testDoubles/SpyPipeline'
 
 export default class PipelineTest extends AbstractSpruceTest {
     private static pipeline: SpyPipeline
-    private static emptyPipelinePath: string
     private static axiosStub: AxiosStub
     private static executionId: string
+    private static emptyPipelinePath: string
+    private static expectedLoadParams: any
 
     protected static async beforeEach() {
         await super.beforeEach()
         process.env.NEUROPYPE_BASE_URL = generateId()
-
-        this.emptyPipelinePath = this.resolvePath(
-            `build/__tests__/pipelines/empty_pipeline.pyp`
-        )
 
         this.executionId = generateId()
         this.axiosStub = new AxiosStub()
@@ -34,6 +31,19 @@ export default class PipelineTest extends AbstractSpruceTest {
         this.axiosStub.fakeGetResponsesByUrl = {}
         this.axiosStub.patchParamsHistory = []
         this.resetLastPostParams()
+
+        this.emptyPipelinePath = this.resolvePath(
+            `build/__tests__/pipelines/empty_pipeline.pyp`
+        )
+
+        this.expectedLoadParams = {
+            url: `${this.executionIdUrl}/actions/load`,
+            config: undefined,
+            data: {
+                file: this.emptyPipelinePath,
+                what: 'graph',
+            },
+        }
 
         this.pipeline = (await PipelineImpl.Pipeline({
             path: this.emptyPipelinePath,
@@ -89,14 +99,7 @@ export default class PipelineTest extends AbstractSpruceTest {
         this.assertFirstPostParamsEqualsExpected()
 
         const loadParams = this.axiosStub.postParamsHistory[1]
-        assert.isEqualDeep(loadParams, {
-            url: `${this.executionIdUrl}/actions/load`,
-            config: undefined,
-            data: {
-                file: this.emptyPipelinePath,
-                what: 'graph',
-            },
-        })
+        assert.isEqualDeep(loadParams, this.expectedLoadParams)
     }
 
     @test()
@@ -143,6 +146,14 @@ export default class PipelineTest extends AbstractSpruceTest {
 
         this.assertFirstPostParamsEqualsExpected()
         assert.isEqual(this.pipeline.getExecutionUrl(), this.executionIdUrl)
+    }
+
+    @test()
+    protected static async resetLoadsPipelineIntoNewExecution() {
+        await this.pipeline.reset()
+
+        const loadParams = this.axiosStub.postParamsHistory[3]
+        assert.isEqualDeep(loadParams, this.expectedLoadParams)
     }
 
     @test()

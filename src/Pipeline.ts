@@ -97,7 +97,7 @@ export default class PipelineImpl implements Pipeline {
     public async reset() {
         this.log.info(`Resetting pipeline: ${this.path}`)
         await this.deleteExecution()
-        await this.createExecution()
+        await this.load()
     }
 
     private async deleteExecution() {
