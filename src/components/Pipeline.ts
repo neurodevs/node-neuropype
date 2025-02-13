@@ -18,7 +18,7 @@ export default class PipelineImpl implements Pipeline {
     private executionId?: string
     private log = buildLog('PipelineImpl')
 
-    public static async Pipeline(pypFilepath: string) {
+    public static async Create(pypFilepath: string) {
         assertOptions({ pypFilepath }, ['pypFilepath'])
 
         const neuropypeBaseUrl = process.env.NEUROPYPE_BASE_URL ?? ''

@@ -45,7 +45,7 @@ export default class PipelineTest extends AbstractSpruceTest {
             },
         }
 
-        this.pipeline = (await PipelineImpl.Pipeline(
+        this.pipeline = (await PipelineImpl.Create(
             this.emptyPipelinePath
         )) as SpyPipeline
     }
@@ -53,7 +53,7 @@ export default class PipelineTest extends AbstractSpruceTest {
     @test()
     protected static async throwsWithMissingParams() {
         //@ts-ignore
-        const err = await assert.doesThrowAsync(() => PipelineImpl.Pipeline())
+        const err = await assert.doesThrowAsync(() => PipelineImpl.Create())
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: ['pypFilepath'],
         })
@@ -63,7 +63,7 @@ export default class PipelineTest extends AbstractSpruceTest {
     protected static async throwsWhenPathDoesNotEndInPyp() {
         const invalidPath = generateId()
         const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Pipeline(invalidPath)
+            PipelineImpl.Create(invalidPath)
         )
         errorAssert.assertError(err, 'INVALID_PIPELINE_FORMAT', {
             path: invalidPath,
@@ -76,7 +76,7 @@ export default class PipelineTest extends AbstractSpruceTest {
         // Should be re-implemented once we have a better way to test this.
         const missingPath = `${generateId()}.pyp`
         const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Pipeline(missingPath)
+            PipelineImpl.Create(missingPath)
         )
         errorAssert.assertError(err, 'PIPELINE_NOT_FOUND', {
             path: missingPath,
@@ -87,14 +87,14 @@ export default class PipelineTest extends AbstractSpruceTest {
     protected static async throwsWithMissingEnv() {
         delete process.env.NEUROPYPE_BASE_URL
         const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Pipeline(generateId())
+            PipelineImpl.Create(generateId())
         )
         errorAssert.assertError(err, 'MISSING_NEUROPYPE_BASE_URL_ENV')
     }
 
     @test()
     protected static async creatingPipelineCreatesExecutionAndLoadsPipeline() {
-        await PipelineImpl.Pipeline(this.emptyPipelinePath)
+        await PipelineImpl.Create(this.emptyPipelinePath)
 
         this.assertFirstPostParamsEqualsExpected()
 
