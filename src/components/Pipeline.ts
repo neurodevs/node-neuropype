@@ -1,14 +1,14 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
-import SpruceError from './errors/SpruceError'
+import SpruceError from '../errors/SpruceError'
 import {
     Pipeline,
     PipelineConstructor,
     PipelineConstructorOptions,
     PipelineOptions,
     PipelineNode,
-} from './nodeNeuropype.types'
+} from '../nodeNeuropype.types'
 
 export default class PipelineImpl implements Pipeline {
     public static axios: Axios = axios

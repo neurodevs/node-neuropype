@@ -1,5 +1,5 @@
-import Executions from './Executions'
-import PipelineImpl from './Pipeline'
+import Executions from './components/Executions'
+import PipelineImpl from './components/Pipeline'
 
 const defaultPipelinePath =
     'C:\\Users\\suppo\\Lumena\\NeuropypeFiles\\lumena-edge-pipelines\\pipelines\\quality_check.pyp'

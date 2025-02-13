@@ -4,7 +4,7 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import Executions from '../Executions'
+import Executions from '../components/Executions'
 import { ExecutionDetails } from '../nodeNeuropype.types'
 import AxiosStub from '../testDoubles/AxiosStub'
 import { generateFakedAxiosResponse } from '../testDoubles/generateFakedAxiosResponse'

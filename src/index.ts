@@ -1,8 +1,8 @@
-export { default as PipelineImpl } from './Pipeline'
-export * from './Pipeline'
+export { default as PipelineImpl } from './components/Pipeline'
+export * from './components/Pipeline'
 
-export { default as Executions } from './Executions'
-export * from './Executions'
+export { default as Executions } from './components/Executions'
+export * from './components/Executions'
 
 export { default as FakePipeline } from './testDoubles/FakePipeline'
 export * from './testDoubles/FakePipeline'

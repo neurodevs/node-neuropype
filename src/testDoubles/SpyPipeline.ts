@@ -1,5 +1,5 @@
+import PipelineImpl from '../components/Pipeline'
 import { PipelineConstructorOptions } from '../nodeNeuropype.types'
-import PipelineImpl from '../Pipeline'
 
 export default class SpyPipeline extends PipelineImpl {
     public constructor(options: PipelineConstructorOptions) {
