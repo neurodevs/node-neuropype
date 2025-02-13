@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-neuropype",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-neuropype.git",
   "scripts": {
@@ -21,6 +21,7 @@
     "update.dependencies": "yarn run clean.dependencies && yarn",
     "resolve-paths.lint": "yarn run build.resolve-paths ; yarn run lint",
     "test": "jest",
+    "test.neuropype": "node build/runIntegrationTests.js",
     "watch.build.dev": "tsc-watch --sourceMap --onCompilationComplete 'yarn run post.watch.build'",
     "watch.lint": "concurrently 'yarn lint' \"chokidar 'src/**/*' -c 'yarn lint.tsc'\"",
     "watch.rebuild": "yarn run clean.all && yarn install && yarn run watch.build.dev",
