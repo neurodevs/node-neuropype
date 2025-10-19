@@ -4,10 +4,10 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import Executions from '../components/Executions'
-import { ExecutionDetails } from '../nodeNeuropype.types'
-import AxiosStub from '../testDoubles/AxiosStub'
-import { generateFakedAxiosResponse } from '../testDoubles/generateFakedAxiosResponse'
+import Executions from '../../components/Executions'
+import { ExecutionDetails } from '../../types'
+import AxiosStub from '../../testDoubles/axios/AxiosStub'
+import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'
 
 export default class ExecutionsTest extends AbstractSpruceTest {
     private static axiosStub: AxiosStub

@@ -9,7 +9,7 @@ import {
     PipelineConstructor,
     PipelineConstructorOptions,
     PipelineNode,
-} from '../nodeNeuropype.types'
+} from '../types'
 
 export default class PipelineImpl implements Pipeline {
     public static Class?: PipelineConstructor

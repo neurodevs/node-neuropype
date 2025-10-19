@@ -1,7 +1,7 @@
 import axios, { Axios } from 'axios'
 import json5 from 'json5'
 import SpruceError from '../errors/SpruceError'
-import { Description, ExecutionDetails } from '../nodeNeuropype.types'
+import { Description, ExecutionDetails } from '../types'
 
 export default class Executions {
     public static axios: Axios = axios

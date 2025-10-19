@@ -4,10 +4,10 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import PipelineImpl from '../components/Pipeline'
-import AxiosStub from '../testDoubles/AxiosStub'
-import { generateFakedAxiosResponse } from '../testDoubles/generateFakedAxiosResponse'
-import SpyPipeline from '../testDoubles/SpyPipeline'
+import PipelineImpl from '../../components/Pipeline'
+import AxiosStub from '../../testDoubles/axios/AxiosStub'
+import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'
+import SpyPipeline from '../../testDoubles/Pipeline/SpyPipeline'
 
 export default class PipelineTest extends AbstractSpruceTest {
     private static pipeline: SpyPipeline
@@ -39,7 +39,7 @@ export default class PipelineTest extends AbstractSpruceTest {
         this.resetLastPostParams()
 
         this.emptyPipelinePath = this.resolvePath(
-            `build/__tests__/pipelines/empty_pipeline.pyp`
+            `build/testDoubles/fakePipelines/empty_pipeline.pyp`
         )
 
         this.expectedLoadParams = {

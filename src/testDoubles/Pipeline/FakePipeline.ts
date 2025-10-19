@@ -2,7 +2,7 @@ import {
     ExecutionDetails,
     Pipeline,
     PipelineConstructorOptions,
-} from '../nodeNeuropype.types'
+} from '../../types'
 
 export default class FakePipeline implements Pipeline {
     public static details?: ExecutionDetails
