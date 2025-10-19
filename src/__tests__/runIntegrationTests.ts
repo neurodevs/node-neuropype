@@ -1,6 +1,6 @@
 import { generateId } from '@sprucelabs/test-utils'
-import Executions from '../components/Executions'
-import PipelineImpl from '../components/Pipeline'
+import Executions from '../impl/Executions'
+import PipelineImpl from '../impl/Pipeline'
 
 async function beforeEach() {
     await Executions.deleteAll()

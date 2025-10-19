@@ -4,7 +4,7 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import PipelineImpl from '../../components/Pipeline'
+import PipelineImpl from '../../impl/Pipeline'
 import AxiosStub from '../../testDoubles/axios/AxiosStub'
 import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'
 import SpyPipeline from '../../testDoubles/Pipeline/SpyPipeline'

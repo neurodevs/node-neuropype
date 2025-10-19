@@ -1,7 +1,7 @@
 // Pipeline
 
-export { default as PipelineImpl } from './components/Pipeline'
-export * from './components/Pipeline'
+export { default as PipelineImpl } from './impl/Pipeline'
+export * from './impl/Pipeline'
 
 export { default as SpyPipeline } from './testDoubles/Pipeline/SpyPipeline'
 export * from './testDoubles/Pipeline/SpyPipeline'
@@ -11,8 +11,8 @@ export * from './testDoubles/Pipeline/FakePipeline'
 
 // Executions
 
-export { default as Executions } from './components/Executions'
-export * from './components/Executions'
+export { default as Executions } from './impl/Executions'
+export * from './impl/Executions'
 
 // axios
 

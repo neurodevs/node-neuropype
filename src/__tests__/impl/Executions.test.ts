@@ -4,7 +4,7 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import Executions from '../../components/Executions'
+import Executions from '../../impl/Executions'
 import { ExecutionDetails } from '../../types'
 import AxiosStub from '../../testDoubles/axios/AxiosStub'
 import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'

@@ -1,4 +1,4 @@
-import PipelineImpl from '../../components/Pipeline'
+import PipelineImpl from '../../impl/Pipeline'
 import { PipelineConstructorOptions } from '../../types'
 
 export default class SpyPipeline extends PipelineImpl {
