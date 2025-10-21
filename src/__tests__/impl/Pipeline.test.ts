@@ -2,8 +2,8 @@ import AbstractSpruceTest, {
     test,
     assert,
     errorAssert,
-    generateId,
 } from '@sprucelabs/test-utils'
+import generateId from '@neurodevs/generate-id'
 import PipelineImpl from '../../impl/Pipeline'
 import AxiosStub from '../../testDoubles/axios/AxiosStub'
 import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'

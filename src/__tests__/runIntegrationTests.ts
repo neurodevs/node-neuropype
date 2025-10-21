@@ -1,4 +1,4 @@
-import { generateId } from '@sprucelabs/test-utils'
+import generateId from '@neurodevs/generate-id'
 import Executions from '../impl/Executions'
 import PipelineImpl from '../impl/Pipeline'
 
