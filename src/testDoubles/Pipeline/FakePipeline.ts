@@ -2,7 +2,7 @@ import {
     ExecutionDetails,
     Pipeline,
     PipelineConstructorOptions,
-} from '../../types'
+} from '../../types.js'
 
 export default class FakePipeline implements Pipeline {
     public static details?: ExecutionDetails

@@ -3,9 +3,7 @@
     "skipped": []
   },
   "installed": [
-    "test",
-    "schema",
-    "error"
+    "test"
   ],
   "skipped": [
     "skill"

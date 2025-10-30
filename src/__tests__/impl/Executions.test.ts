@@ -1,15 +1,12 @@
-import AbstractSpruceTest, {
-    test,
-    assert,
-    errorAssert,
-} from '@sprucelabs/test-utils'
 import generateId from '@neurodevs/generate-id'
-import Executions from '../../impl/Executions'
-import AxiosStub from '../../testDoubles/axios/AxiosStub'
-import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'
-import { ExecutionDetails } from '../../types'
+import AbstractModuleTest, { test, assert } from '@neurodevs/node-tdd'
 
-export default class ExecutionsTest extends AbstractSpruceTest {
+import Executions from '../../impl/Executions.js'
+import AxiosStub from '../../testDoubles/axios/AxiosStub.js'
+import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse.js'
+import { ExecutionDetails } from '../../types.js'
+
+export default class ExecutionsTest extends AbstractModuleTest {
     private static axiosStub: AxiosStub
     protected static async beforeEach() {
         await super.beforeEach()
@@ -24,8 +21,11 @@ export default class ExecutionsTest extends AbstractSpruceTest {
     @test()
     protected static async throwsWithMissingEnv() {
         delete process.env.NEUROPYPE_BASE_URL
-        const err = await assert.doesThrowAsync(() => this.deleteAll())
-        errorAssert.assertError(err, 'MISSING_NEUROPYPE_BASE_URL_ENV')
+
+        await assert.doesThrowAsync(
+            () => this.deleteAll(),
+            'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
+        )
     }
 
     @test()

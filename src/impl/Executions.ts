@@ -1,7 +1,7 @@
 import axios, { Axios } from 'axios'
 import json5 from 'json5'
-import SpruceError from '../errors/SpruceError'
-import { Description, ExecutionDetails } from '../types'
+
+import { Description, ExecutionDetails } from '../types.js'
 
 export default class Executions {
     public static axios: Axios = axios
@@ -47,7 +47,9 @@ export default class Executions {
 
     private static validateBaseUrl() {
         if (!this.baseUrl) {
-            throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+            throw new Error(
+                'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
+            )
         }
     }
 

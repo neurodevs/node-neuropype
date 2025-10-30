@@ -1,15 +1,13 @@
-import { assertOptions } from '@sprucelabs/schema'
-import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import axios, { Axios } from 'axios'
 import json5 from 'json5'
-import SpruceError from '../errors/SpruceError'
+
 import {
     ExecutionDetails,
     Pipeline,
     PipelineConstructor,
     PipelineConstructorOptions,
     PipelineNode,
-} from '../types'
+} from '../types.js'
 
 export default class PipelineImpl implements Pipeline {
     public static Class?: PipelineConstructor
@@ -19,11 +17,9 @@ export default class PipelineImpl implements Pipeline {
     private baseUrl: string
     private path: string
     private executionId?: string
-    private log = buildLog('PipelineImpl')
+    private log = console
 
     public static async Create(pypFilepath: string) {
-        assertOptions({ pypFilepath }, ['pypFilepath'])
-
         const neuropypeBaseUrl = process.env.NEUROPYPE_BASE_URL ?? ''
 
         this.validateBaseUrl(neuropypeBaseUrl)
@@ -40,13 +36,17 @@ export default class PipelineImpl implements Pipeline {
 
     private static validateBaseUrl(baseUrl: string) {
         if (!baseUrl) {
-            throw new SpruceError({ code: 'MISSING_NEUROPYPE_BASE_URL_ENV' })
+            throw new Error(
+                'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
+            )
         }
     }
 
     private static validateFileExtension(path: string) {
         if (!path.endsWith('.pyp')) {
-            throw new SpruceError({ path, code: 'INVALID_PIPELINE_FORMAT' })
+            throw new Error(
+                `Pipeline path must end in .pyp!\n\nFound: ${path}\n`
+            )
         }
     }
 

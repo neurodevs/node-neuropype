@@ -1,6 +1,7 @@
 import generateId from '@neurodevs/generate-id'
-import Executions from '../impl/Executions'
-import PipelineImpl from '../impl/Pipeline'
+
+import Executions from '../impl/Executions.js'
+import PipelineImpl from '../impl/Pipeline.js'
 
 async function beforeEach() {
     await Executions.deleteAll()

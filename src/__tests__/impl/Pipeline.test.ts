@@ -1,15 +1,12 @@
-import AbstractSpruceTest, {
-    test,
-    assert,
-    errorAssert,
-} from '@sprucelabs/test-utils'
 import generateId from '@neurodevs/generate-id'
-import PipelineImpl from '../../impl/Pipeline'
-import AxiosStub from '../../testDoubles/axios/AxiosStub'
-import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse'
-import SpyPipeline from '../../testDoubles/Pipeline/SpyPipeline'
+import AbstractModuleTest, { test, assert } from '@neurodevs/node-tdd'
 
-export default class PipelineTest extends AbstractSpruceTest {
+import PipelineImpl from '../../impl/Pipeline.js'
+import AxiosStub from '../../testDoubles/axios/AxiosStub.js'
+import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse.js'
+import SpyPipeline from '../../testDoubles/Pipeline/SpyPipeline.js'
+
+export default class PipelineTest extends AbstractModuleTest {
     private static pipeline: SpyPipeline
     private static axiosStub: AxiosStub
     private static fakeResponse: any
@@ -61,23 +58,13 @@ export default class PipelineTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async throwsWithMissingParams() {
-        //@ts-ignore
-        const err = await assert.doesThrowAsync(() => PipelineImpl.Create())
-        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['pypFilepath'],
-        })
-    }
-
-    @test()
     protected static async throwsWhenPathDoesNotEndInPyp() {
         const invalidPath = generateId()
-        const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Create(invalidPath)
+
+        await assert.doesThrowAsync(
+            () => PipelineImpl.Create(invalidPath),
+            `Pipeline path must end in .pyp!\n\nFound: ${invalidPath}\n`
         )
-        errorAssert.assertError(err, 'INVALID_PIPELINE_FORMAT', {
-            path: invalidPath,
-        })
     }
 
     @test.skip()
@@ -85,21 +72,21 @@ export default class PipelineTest extends AbstractSpruceTest {
         // Skipped because of Mac Mini to Windows path issues.
         // Should be re-implemented once we have a better way to test this.
         const missingPath = `${generateId()}.pyp`
-        const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Create(missingPath)
+
+        await assert.doesThrowAsync(
+            () => PipelineImpl.Create(missingPath),
+            `Pipeline not found: ${missingPath}!`
         )
-        errorAssert.assertError(err, 'PIPELINE_NOT_FOUND', {
-            path: missingPath,
-        })
     }
 
     @test()
     protected static async throwsWithMissingEnv() {
         delete process.env.NEUROPYPE_BASE_URL
-        const err = await assert.doesThrowAsync(() =>
-            PipelineImpl.Create(generateId())
+
+        await assert.doesThrowAsync(
+            () => PipelineImpl.Create(generateId()),
+            'Please define NEUROPYPE_BASE_URL in your env! Usually: http://localhost:6937'
         )
-        errorAssert.assertError(err, 'MISSING_NEUROPYPE_BASE_URL_ENV')
     }
 
     @test()
