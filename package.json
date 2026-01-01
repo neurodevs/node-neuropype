@@ -52,7 +52,7 @@
     "json5": "^2.2.3"
   },
   "devDependencies": {
-    "@neurodevs/generate-id": "1.1.1",
+    "@neurodevs/generate-id": "1.1.2",
     "@neurodevs/node-tdd": "0.2.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.9.0",
