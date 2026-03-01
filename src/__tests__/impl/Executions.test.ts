@@ -1,12 +1,13 @@
 import generateId from '@neurodevs/generate-id'
-import AbstractModuleTest, { test, assert } from '@neurodevs/node-tdd'
+import { test, assert } from '@neurodevs/node-tdd'
 
 import Executions from '../../impl/Executions.js'
 import AxiosStub from '../../testDoubles/axios/AxiosStub.js'
 import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse.js'
 import { ExecutionDetails } from '../../types.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class ExecutionsTest extends AbstractModuleTest {
+export default class ExecutionsTest extends AbstractPackageTest {
     private static axiosStub: AxiosStub
     protected static async beforeEach() {
         await super.beforeEach()
@@ -37,11 +38,7 @@ export default class ExecutionsTest extends AbstractModuleTest {
     @test('can delete one execution 1', '0000')
     @test('can delete one execution 2', '0001')
     protected static async callsDeleteForOnlyExecutionReturned(id: string) {
-        this.dropInAxiosFakedGetResponse([
-            {
-                id,
-            },
-        ])
+        this.dropInAxiosFakedGetResponse([{ id }])
 
         await this.deleteAll()
 
@@ -50,14 +47,7 @@ export default class ExecutionsTest extends AbstractModuleTest {
 
     @test()
     protected static async callsDeleteOnMultipleExecutions() {
-        this.dropInAxiosFakedGetResponse([
-            {
-                id: '0000',
-            },
-            {
-                id: '0001',
-            },
-        ])
+        this.dropInAxiosFakedGetResponse([{ id: '0000' }, { id: '0001' }])
 
         await this.deleteAll()
 
@@ -67,9 +57,7 @@ export default class ExecutionsTest extends AbstractModuleTest {
 
     @test()
     protected static async canGetInfoOnASingleExecution() {
-        const data = {
-            state: { running: false },
-        }
+        const data = { state: { running: false } }
         this.dropInAxiosFakedGetResponse(JSON.stringify(data))
         const actual = await Executions.getDetails('1234')
 
@@ -96,9 +84,7 @@ export default class ExecutionsTest extends AbstractModuleTest {
 
     @test()
     protected static async getDescriptionReturnsResponse() {
-        const data = {
-            description: generateId(),
-        }
+        const data = { description: generateId() }
         this.dropInAxiosFakedGetResponse(data)
         const actual = await Executions.getDescription('0000')
         assert.isEqualDeep(actual, data)
@@ -106,14 +92,7 @@ export default class ExecutionsTest extends AbstractModuleTest {
 
     @test()
     protected static async exposesStaticGetAllMethod() {
-        const data = [
-            {
-                id: '0000',
-            },
-            {
-                id: '0001',
-            },
-        ]
+        const data = [{ id: '0000' }, { id: '0001' }]
 
         this.dropInAxiosFakedGetResponse(data)
 

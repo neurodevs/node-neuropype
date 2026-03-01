@@ -1,12 +1,13 @@
 import generateId from '@neurodevs/generate-id'
-import AbstractModuleTest, { test, assert } from '@neurodevs/node-tdd'
+import  { test, assert } from '@neurodevs/node-tdd'
 
 import PipelineImpl from '../../impl/Pipeline.js'
 import AxiosStub from '../../testDoubles/axios/AxiosStub.js'
 import { generateFakedAxiosResponse } from '../../testDoubles/axios/generateFakedAxiosResponse.js'
 import SpyPipeline from '../../testDoubles/Pipeline/SpyPipeline.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class PipelineTest extends AbstractModuleTest {
+export default class PipelineTest extends AbstractPackageTest {
     private static pipeline: SpyPipeline
     private static axiosStub: AxiosStub
     private static fakeResponse: any
