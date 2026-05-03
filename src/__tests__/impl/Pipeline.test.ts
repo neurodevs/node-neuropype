@@ -1,5 +1,5 @@
 import generateId from '@neurodevs/generate-id'
-import  { test, assert } from '@neurodevs/node-tdd'
+import { test, assert } from '@neurodevs/node-tdd'
 
 import PipelineImpl from '../../impl/Pipeline.js'
 import AxiosStub from '../../testDoubles/axios/AxiosStub.js'
