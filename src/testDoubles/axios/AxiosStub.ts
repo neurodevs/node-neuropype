@@ -158,4 +158,12 @@ export default class AxiosStub implements Axios {
     ): Promise<R> {
         return {} as R
     }
+
+    public async query<T = any, R = AxiosResponse<T, any>, D = any>(
+        _url: string,
+        _data?: D | undefined,
+        _config?: AxiosRequestConfig<D> | undefined
+    ): Promise<R> {
+        return {} as R
+    }
 }
